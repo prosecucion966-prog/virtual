@@ -85,7 +85,9 @@ def verify_email(request,token):
 def login_view(request):
  error=None
  if request.method=="POST":
-  email=request.POST.get("email","").strip().lower(); user=authenticate(request,username=email,password=request.POST.get("password",""))
+  identifier=request.POST.get("email","").strip(); password=request.POST.get("password","")
+  account=User.objects.filter(email__iexact=identifier).first() if "@" in identifier else User.objects.filter(username__iexact=identifier).first()
+  user=authenticate(request,username=account.username if account else identifier,password=password)
   if user and user.is_active and hasattr(user,"profile") and user.profile.estado=="activo":
    login(request,user); return redirect("dashboard")
   error="Credenciales incorrectas o cuenta pendiente de verificación."
