@@ -1,0 +1,1563 @@
+{
+  "course": {
+    "code": "DDHH-DEMO-2026",
+    "title": "Derechos Humanos",
+    "program": "Derecho",
+    "category": "PFG",
+    "trayectory": "III",
+    "credits": 3,
+    "weeks": 16,
+    "modality": "Mixta: encuentros sincrónicos y aula virtual",
+    "enrollment_key": "DDHH-DEMO-2026",
+    "description": "Unidad curricular de formación jurídica y ciudadana orientada al estudio crítico de los fundamentos, instrumentos y mecanismos nacionales e internacionales de protección de los derechos humanos. Desde el contexto venezolano, analiza las obligaciones estatales, las garantías constitucionales y los estándares aplicables a la actuación de los órganos de seguridad ciudadana.",
+    "competencies": [
+      "Interpreta instrumentos universales, interamericanos y constitucionales de derechos humanos.",
+      "Argumenta situaciones relacionadas con la actuación estatal mediante fuentes normativas y jurisprudenciales verificables.",
+      "Aplica legalidad, necesidad, proporcionalidad, trato digno y rendición de cuentas al análisis de actuaciones de seguridad ciudadana."
+    ],
+    "objectives": [
+      "Reconocer la evolución histórica y los principios generales de los derechos humanos.",
+      "Explicar los mecanismos de protección universal e interamericano.",
+      "Analizar las garantías constitucionales venezolanas y los órganos nacionales de protección.",
+      "Evaluar la actuación de funcionarios encargados de hacer cumplir la ley conforme a estándares internacionales."
+    ],
+    "gradebook": {
+      "scale": "1-20",
+      "pass_mark": 10,
+      "rounding": "Calcular con precisión completa y redondear solo la nota final a un decimal mediante redondeo aritmético; si la normativa institucional exige entero, aplicar esa regla institucional.",
+      "weights": {
+        "Cuestionarios": 20,
+        "Foros": 10,
+        "Tareas": 20,
+        "Taller": 10,
+        "Parcial": 15,
+        "Final": 25
+      }
+    }
+  },
+  "units": [
+    {
+      "number": 1,
+      "title": "Fundamentos y evolución histórica",
+      "content": "Universalidad, indivisibilidad, interdependencia, progresividad; Declaración de 1789 y DUDH 1948.",
+      "activity": "Mapa conceptual comparado.",
+      "resources": [
+        {
+          "title": "Declaración Universal de Derechos Humanos",
+          "organism": "Asamblea General ONU",
+          "year": 1948,
+          "url": "https://www.un.org/es/about-us/udhr",
+          "url_por_verificar": false
+        },
+        {
+          "title": "Declaración de los Derechos del Hombre y del Ciudadano",
+          "organism": "Asamblea Nacional Constituyente de Francia",
+          "year": 1789,
+          "url": null,
+          "url_por_verificar": true
+        }
+      ],
+      "audiovisual": {
+        "title": "Recurso audiovisual institucional de contextualización",
+        "organism": "ONU / ACNUDH",
+        "year": "Por confirmar",
+        "url": null,
+        "url_por_verificar": true
+      }
+    },
+    {
+      "number": 2,
+      "title": "Sistema universal de protección",
+      "content": "PIDCP y PIDESC de 1966; Convención contra la Tortura de 1984; Consejo de Derechos Humanos y ACNUDH.",
+      "activity": "Cuadro comparativo de instrumentos, obligaciones y mecanismos.",
+      "resources": [
+        {
+          "title": "Pacto Internacional de Derechos Civiles y Políticos",
+          "organism": "ONU",
+          "year": 1966,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Pacto Internacional de Derechos Económicos, Sociales y Culturales",
+          "organism": "ONU",
+          "year": 1966,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Convención contra la Tortura y Otros Tratos o Penas Crueles, Inhumanos o Degradantes",
+          "organism": "ONU",
+          "year": 1984,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Protocolo de Estambul: Manual para la investigación y documentación eficaces de la tortura",
+          "organism": "ACNUDH / ONU",
+          "year": 2004,
+          "url": "https://www.ohchr.org/documents/publications/training8rev1sp.pdf",
+          "url_por_verificar": false
+        }
+      ],
+      "audiovisual": {
+        "title": "Recurso audiovisual institucional de contextualización",
+        "organism": "ONU / ACNUDH",
+        "year": "Por confirmar",
+        "url": null,
+        "url_por_verificar": true
+      }
+    },
+    {
+      "number": 3,
+      "title": "Sistema interamericano",
+      "content": "Declaración Americana 1948, Convención Americana 1969, CIDH y Corte IDH; análisis de jurisprudencia.",
+      "activity": "Ficha jurisprudencial: hechos, derechos, razonamiento y reparaciones.",
+      "resources": [
+        {
+          "title": "Declaración Americana de los Derechos y Deberes del Hombre",
+          "organism": "OEA",
+          "year": 1948,
+          "url": "https://www.oas.org/es/cidh/mandato/Basicos/declaracion.asp",
+          "url_por_verificar": false
+        },
+        {
+          "title": "Convención Americana sobre Derechos Humanos, Pacto de San José",
+          "organism": "OEA",
+          "year": 1969,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Velásquez Rodríguez vs. Honduras, ficha técnica",
+          "organism": "Corte IDH",
+          "year": 1988,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Del Caracazo vs. Venezuela, ficha técnica",
+          "organism": "Corte IDH",
+          "year": "1999 (sentencia de reparaciones: 2002; confirmar ficha oficial)",
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Montero Aranguren y otros (Retén de Catia) vs. Venezuela",
+          "organism": "Corte IDH",
+          "year": 2006,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Familia Barrios vs. Venezuela, ficha técnica",
+          "organism": "Corte IDH",
+          "year": 2011,
+          "url": null,
+          "url_por_verificar": true
+        }
+      ],
+      "audiovisual": {
+        "title": "Recurso audiovisual institucional de contextualización",
+        "organism": "OEA / Corte IDH",
+        "year": "Por confirmar",
+        "url": null,
+        "url_por_verificar": true
+      }
+    },
+    {
+      "number": 4,
+      "title": "Derechos humanos en la CRBV",
+      "content": "Título III; artículos 19, 22, 23, 27, 43, 44 y 46; Defensoría del Pueblo y Ministerio Público.",
+      "activity": "Comentario jurídico de garantías constitucionales.",
+      "resources": [
+        {
+          "title": "Constitución de la República Bolivariana de Venezuela",
+          "organism": "República Bolivariana de Venezuela / publicación oficial",
+          "year": 1999,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Ley Orgánica de la Defensoría del Pueblo",
+          "organism": "República Bolivariana de Venezuela / Gaceta Oficial",
+          "year": "vigente por verificar",
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Ley Orgánica del Ministerio Público",
+          "organism": "República Bolivariana de Venezuela / Gaceta Oficial",
+          "year": "vigente por verificar",
+          "url": null,
+          "url_por_verificar": true
+        }
+      ],
+      "audiovisual": {
+        "title": "Recurso audiovisual institucional de contextualización",
+        "organism": "ONU / ACNUDH",
+        "year": "Por confirmar",
+        "url": null,
+        "url_por_verificar": true
+      }
+    },
+    {
+      "number": 5,
+      "title": "Derechos humanos y seguridad ciudadana: enfoque UNES",
+      "content": "Código de Conducta 1979; Principios Básicos sobre uso de fuerza 1990; detención, trato digno, cadena de custodia y Protocolo de Estambul.",
+      "activity": "Resolución de escenario de uso de fuerza y rendición de cuentas.",
+      "resources": [
+        {
+          "title": "Código de Conducta para Funcionarios Encargados de Hacer Cumplir la Ley",
+          "organism": "Asamblea General ONU, resolución 34/169",
+          "year": 1979,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Principios Básicos sobre el Empleo de la Fuerza y de Armas de Fuego",
+          "organism": "ONU",
+          "year": 1990,
+          "url": null,
+          "url_por_verificar": true
+        },
+        {
+          "title": "Protocolo de Estambul: Manual para la investigación y documentación eficaces de la tortura",
+          "organism": "ACNUDH / ONU",
+          "year": 2004,
+          "url": "https://www.ohchr.org/documents/publications/training8rev1sp.pdf",
+          "url_por_verificar": false
+        }
+      ],
+      "audiovisual": {
+        "title": "Recurso audiovisual institucional de contextualización",
+        "organism": "ONU / ACNUDH",
+        "year": "Por confirmar",
+        "url": null,
+        "url_por_verificar": true
+      }
+    }
+  ],
+  "quizzes": [
+    {
+      "unit": 1,
+      "questions": [
+        {
+          "type": "mcq",
+          "question": "¿En qué año se aprobó la DUDH?",
+          "options": [
+            "1945",
+            "1948",
+            "1966",
+            "1979"
+          ],
+          "answer": "1948",
+          "feedback": "La DUDH fue proclamada el 10 de diciembre de 1948 por la Asamblea General de la ONU.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La DUDH fue adoptada por la Asamblea General de la ONU.",
+          "options": null,
+          "answer": true,
+          "feedback": "La resolución 217 A (III) fue adoptada el 10 de diciembre de 1948.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "La Declaración de los Derechos del Hombre y del Ciudadano se aprobó en ____.",
+          "options": null,
+          "answer": "1789",
+          "feedback": "1789 corresponde a la Declaración francesa de agosto de 1789.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Qué principio afirma que los derechos corresponden a toda persona?",
+          "options": [
+            "Universalidad",
+            "Territorialidad",
+            "Reciprocidad"
+          ],
+          "answer": "Universalidad",
+          "feedback": "La universalidad reconoce titularidad a toda persona.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "La indivisibilidad significa que:",
+          "options": [
+            "Las categorías de derechos no deben fragmentarse como prescindibles",
+            "Solo los derechos civiles son exigibles"
+          ],
+          "answer": "Las categorías de derechos no deben fragmentarse como prescindibles",
+          "feedback": "La indivisibilidad impide tratar categorías completas de derechos como prescindibles.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La interdependencia expresa que el disfrute de un derecho puede incidir en otros.",
+          "options": null,
+          "answer": true,
+          "feedback": "Los derechos se refuerzan y condicionan mutuamente.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "La progresividad exige:",
+          "options": [
+            "Avanzar en la efectividad de los derechos y justificar rigurosamente retrocesos",
+            "Eliminar garantías gradualmente"
+          ],
+          "answer": "Avanzar en la efectividad de los derechos y justificar rigurosamente retrocesos",
+          "feedback": "La progresividad exige avances y un examen estricto de medidas regresivas.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "La dignidad es fundamento central de los derechos de la ____.",
+          "options": null,
+          "answer": "persona",
+          "feedback": "La dignidad de la persona fundamenta el reconocimiento de derechos.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Qué diferencia a la DUDH de la Declaración francesa de 1789?",
+          "options": [
+            "Órgano, contexto y proyección histórica",
+            "Ambas son tratados de la OEA"
+          ],
+          "answer": "Órgano, contexto y proyección histórica",
+          "feedback": "Los instrumentos difieren en contexto histórico, órgano de adopción y naturaleza.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La universalidad hace depender los derechos de la ciudadanía.",
+          "options": null,
+          "answer": false,
+          "feedback": "La titularidad no depende exclusivamente de la ciudadanía.",
+          "review_required": true
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "questions": [
+        {
+          "type": "mcq",
+          "question": "¿En qué año se adoptaron los dos Pactos Internacionales?",
+          "options": [
+            "1948",
+            "1966",
+            "1984"
+          ],
+          "answer": "1966",
+          "feedback": "Los dos Pactos fueron adoptados por la Asamblea General en 1966.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "Los dos Pactos y la DUDH integran la Carta Internacional de Derechos Humanos.",
+          "options": null,
+          "answer": true,
+          "feedback": "La DUDH y los dos Pactos conforman la Carta Internacional de Derechos Humanos.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Cuál es materia del PIDESC?",
+          "options": [
+            "Derecho al trabajo",
+            "Derecho al sufragio exclusivamente"
+          ],
+          "answer": "Derecho al trabajo",
+          "feedback": "El PIDESC incluye el derecho al trabajo y condiciones laborales justas.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "ACNUDH significa Alto Comisionado de la ONU para los Derechos ____.",
+          "options": null,
+          "answer": "Humanos",
+          "feedback": "ACNUDH es el Alto Comisionado de las Naciones Unidas para los Derechos Humanos.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Qué tratado de 1984 aborda específicamente la tortura?",
+          "options": [
+            "Convención contra la Tortura",
+            "Estatuto de Roma"
+          ],
+          "answer": "Convención contra la Tortura",
+          "feedback": "La Convención contra la Tortura fue adoptada en 1984.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "El Consejo de Derechos Humanos es un órgano basado en la Carta de la ONU.",
+          "options": null,
+          "answer": true,
+          "feedback": "El Consejo de Derechos Humanos fue creado por la Asamblea General en 2006.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "Una función del ACNUDH es:",
+          "options": [
+            "Promover y proteger derechos humanos",
+            "Aprobar leyes nacionales"
+          ],
+          "answer": "Promover y proteger derechos humanos",
+          "feedback": "El ACNUDH promueve y protege el disfrute efectivo de los derechos humanos.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "Los Pactos Internacionales fueron adoptados en ____.",
+          "options": null,
+          "answer": "1966",
+          "feedback": "1966 es el año de adopción de los Pactos; la entrada en vigor fue posterior.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "El Protocolo de Estambul orienta la documentación de:",
+          "options": [
+            "Tortura y malos tratos",
+            "Delitos tributarios"
+          ],
+          "answer": "Tortura y malos tratos",
+          "feedback": "El Protocolo de Estambul ofrece directrices médico-jurídicas para documentar tortura y malos tratos.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La Convención contra la Tortura contiene obligaciones de prevención e investigación.",
+          "options": null,
+          "answer": true,
+          "feedback": "La Convención impone deberes de prevención, investigación y sanción.",
+          "review_required": true
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "questions": [
+        {
+          "type": "mcq",
+          "question": "¿Quién adoptó la Declaración Americana en 1948?",
+          "options": [
+            "IX Conferencia Internacional Americana",
+            "Consejo de Europa"
+          ],
+          "answer": "IX Conferencia Internacional Americana",
+          "feedback": "La Declaración Americana se aprobó en Bogotá durante la IX Conferencia Internacional Americana.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La Convención Americana fue adoptada en San José en 1969.",
+          "options": null,
+          "answer": true,
+          "feedback": "La Convención Americana se adoptó en San José, Costa Rica, el 22 de noviembre de 1969.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Qué órgano recibe peticiones individuales en el sistema interamericano?",
+          "options": [
+            "CIDH",
+            "Corte Internacional de Justicia"
+          ],
+          "answer": "CIDH",
+          "feedback": "La CIDH recibe peticiones y desarrolla funciones de promoción y protección.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "La Corte IDH ejerce competencia:",
+          "options": [
+            "Contenciosa y consultiva",
+            "Legislativa y electoral"
+          ],
+          "answer": "Contenciosa y consultiva",
+          "feedback": "La Corte IDH ejerce competencia contenciosa y consultiva conforme a los instrumentos aplicables.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "Velásquez Rodríguez vs. Honduras se relaciona con desaparición ____.",
+          "options": null,
+          "answer": "forzada",
+          "feedback": "La sentencia aborda la desaparición forzada y los deberes estatales de respeto, garantía e investigación.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "Del Caracazo vs. Venezuela examinó uso desproporcionado de la fuerza.",
+          "options": null,
+          "answer": true,
+          "feedback": "El caso examinó responsabilidad internacional por hechos vinculados al uso de la fuerza.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "Montero Aranguren y otros vs. Venezuela se conoce como:",
+          "options": [
+            "Retén de Catia",
+            "El Amparo"
+          ],
+          "answer": "Retén de Catia",
+          "feedback": "El nombre del caso es Montero Aranguren y otros vs. Venezuela (Retén de Catia).",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "Familia Barrios vs. Venezuela examinó, entre otros, derechos a:",
+          "options": [
+            "Vida, integridad y libertad",
+            "Propiedad intelectual"
+          ],
+          "answer": "Vida, integridad y libertad",
+          "feedback": "La sentencia analiza violaciones a derechos fundamentales y deberes de protección e investigación.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "La Convención Americana también se denomina Pacto de ____.",
+          "options": null,
+          "answer": "San José",
+          "feedback": "La Convención Americana se conoce como Pacto de San José.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La CIDH y la Corte IDH tienen idénticas funciones.",
+          "options": null,
+          "answer": false,
+          "feedback": "La Comisión y la Corte son órganos distintos, con funciones diferenciadas.",
+          "review_required": true
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "questions": [
+        {
+          "type": "mcq",
+          "question": "¿Qué artículo de la CRBV regula la jerarquía constitucional de tratados de DDHH?",
+          "options": [
+            "19",
+            "22",
+            "23",
+            "27"
+          ],
+          "answer": "23",
+          "feedback": "El artículo 23 de la CRBV regula la jerarquía constitucional de tratados de derechos humanos en los términos de su texto.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "El artículo 19 consagra progresividad y no discriminación.",
+          "options": null,
+          "answer": true,
+          "feedback": "El artículo 19 establece progresividad y no discriminación en el goce y ejercicio de los derechos.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Qué artículo contiene la cláusula abierta de derechos inherentes?",
+          "options": [
+            "22",
+            "23",
+            "43",
+            "46"
+          ],
+          "answer": "22",
+          "feedback": "El artículo 22 reconoce derechos inherentes aunque no estén enumerados expresamente.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "El artículo 27 regula la acción de ____.",
+          "options": null,
+          "answer": "amparo",
+          "feedback": "El artículo 27 regula la acción de amparo constitucional.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Qué artículo reconoce el derecho a la vida?",
+          "options": [
+            "43",
+            "44",
+            "46"
+          ],
+          "answer": "43",
+          "feedback": "El artículo 43 reconoce el derecho a la vida.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "El artículo 44 protege la libertad:",
+          "options": [
+            "Personal",
+            "De culto"
+          ],
+          "answer": "Personal",
+          "feedback": "El artículo 44 contiene garantías relativas a la libertad personal.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "El artículo 46 protege la integridad física, psíquica y moral.",
+          "options": null,
+          "answer": true,
+          "feedback": "El artículo 46 protege la integridad física, psíquica y moral.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "El artículo 43 reconoce el derecho a la ____.",
+          "options": null,
+          "answer": "vida",
+          "feedback": "El artículo 43 se refiere al derecho a la vida.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿Qué órgano constitucional promueve y defiende derechos humanos?",
+          "options": [
+            "Defensoría del Pueblo",
+            "Banco Central"
+          ],
+          "answer": "Defensoría del Pueblo",
+          "feedback": "La Defensoría del Pueblo tiene mandato constitucional de promoción y defensa de derechos humanos.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La interpretación constitucional exige verificar el texto oficial vigente.",
+          "options": null,
+          "answer": true,
+          "feedback": "El estudio jurídico exige consultar el texto oficial vigente y las competencias legales.",
+          "review_required": true
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "questions": [
+        {
+          "type": "mcq",
+          "question": "¿En qué año se aprobó el Código de Conducta para funcionarios policiales?",
+          "options": [
+            "1966",
+            "1979",
+            "1990"
+          ],
+          "answer": "1979",
+          "feedback": "El Código fue aprobado mediante la resolución 34/169 de la Asamblea General en 1979.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "¿En qué año se adoptaron los Principios Básicos sobre uso de fuerza?",
+          "options": [
+            "1979",
+            "1984",
+            "1990"
+          ],
+          "answer": "1990",
+          "feedback": "Los Principios Básicos se adoptaron en el Octavo Congreso de la ONU en 1990.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "El Código de Conducta limita la fuerza a lo estrictamente necesario.",
+          "options": null,
+          "answer": true,
+          "feedback": "El artículo 3 limita el uso de la fuerza a lo estrictamente necesario.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "Antes de recurrir a la fuerza se debe, cuando sea posible:",
+          "options": [
+            "Usar medios no violentos",
+            "Usar armas preventivamente"
+          ],
+          "answer": "Usar medios no violentos",
+          "feedback": "Los Principios Básicos promueven medios no violentos cuando sea posible.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "La fuerza debe cumplir criterios de legalidad, necesidad y ____.",
+          "options": null,
+          "answer": "proporcionalidad",
+          "feedback": "La proporcionalidad relaciona intensidad de fuerza, amenaza y objetivo legítimo.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "Las lesiones ocasionadas durante una intervención exigen asistencia y reporte conforme a normas aplicables.",
+          "options": null,
+          "answer": true,
+          "feedback": "Los estándares exigen minimizar daños y prestar asistencia a personas lesionadas.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "La cadena de custodia protege:",
+          "options": [
+            "Identidad, integridad y trazabilidad de evidencias",
+            "La sustitución de la investigación"
+          ],
+          "answer": "Identidad, integridad y trazabilidad de evidencias",
+          "feedback": "La cadena de custodia preserva autenticidad, integridad y trazabilidad de evidencias.",
+          "review_required": true
+        },
+        {
+          "type": "mcq",
+          "question": "El Protocolo de Estambul documenta:",
+          "options": [
+            "Tortura y malos tratos",
+            "Infracciones de tránsito"
+          ],
+          "answer": "Tortura y malos tratos",
+          "feedback": "El Protocolo de Estambul orienta la investigación y documentación de tortura y malos tratos.",
+          "review_required": true
+        },
+        {
+          "type": "fill",
+          "question": "Toda persona bajo custodia debe recibir trato ____.",
+          "options": null,
+          "answer": "digno",
+          "feedback": "El trato digno es exigible a toda persona bajo custodia.",
+          "review_required": true
+        },
+        {
+          "type": "tf",
+          "question": "La rendición de cuentas es ajena a los estándares de DDHH.",
+          "options": null,
+          "answer": false,
+          "feedback": "La documentación y rendición de cuentas son esenciales para prevenir abusos e investigar.",
+          "review_required": true
+        }
+      ]
+    }
+  ],
+  "exams": {
+    "midterm_week": 8,
+    "final_week": 16,
+    "questions_each": 20,
+    "minutes": 60,
+    "attempts": 1,
+    "randomize": true,
+    "manual_questions": [
+      {
+        "question": "Explique la obligación estatal de respetar y garantizar derechos ante una detención arbitraria.",
+        "rubric": "Hechos y problemas 25%; normas 25%; aplicación argumentada 35%; claridad y fuentes 15%."
+      },
+      {
+        "question": "Analice progresividad y no regresividad conforme al artículo 19 de la CRBV.",
+        "rubric": "Interpretación constitucional 30%; progresividad/no regresividad 30%; aplicación 25%; fuentes y redacción 15%."
+      },
+      {
+        "question": "Evalúe un escenario hipotético de uso de fuerza policial: legalidad, necesidad, proporcionalidad, asistencia y rendición de cuentas.",
+        "rubric": "Hechos 20%; estándares 35%; medidas posteriores 30%; coherencia 15%."
+      }
+    ],
+    "question_bank": "exam_bank",
+    "objective_questions": 17,
+    "manual_development_questions": 3,
+    "review_required": true
+  },
+  "forums": [
+    {
+      "title": "Universalidad vs. relativismo cultural",
+      "week": 3,
+      "instructions": "Debata si la diversidad cultural puede justificar restricciones a derechos reconocidos universalmente. Fundamente con la DUDH y responda respetuosamente a dos compañeros.",
+      "rubric": [
+        "Fundamentación normativa (1-4)",
+        "Calidad de argumento y contraargumento (1-4)",
+        "Diálogo y participación (1-4)",
+        "Claridad y referencias (1-4)"
+      ]
+    },
+    {
+      "title": "Límites del uso de la fuerza policial",
+      "week": 11,
+      "instructions": "Analice un supuesto hipotético de control de una situación de riesgo: fin legítimo, alternativas no violentas, necesidad, proporcionalidad, asistencia y rendición de cuentas.",
+      "rubric": [
+        "Marco jurídico (1-4)",
+        "Necesidad y proporcionalidad (1-4)",
+        "Prevención, asistencia y control (1-4)",
+        "Argumentación y fuentes (1-4)"
+      ]
+    }
+  ],
+  "assignments": [
+    {
+      "title": "Ensayo: principio de progresividad en la CRBV",
+      "week": 5,
+      "instructions": "Ensayo individual de aproximadamente 1.500 palabras sobre el artículo 19 de la CRBV. Incluya planteamiento, marco normativo, obligaciones estatales, no regresividad, conclusión y bibliografía. Entrega PDF o DOCX.",
+      "rubric": [
+        "Interpretación constitucional (1-4)",
+        "Análisis crítico (1-4)",
+        "Fuentes oficiales y citas (1-4)",
+        "Estructura y redacción (1-4)"
+      ]
+    },
+    {
+      "title": "Análisis de caso de la Corte IDH",
+      "week": 13,
+      "instructions": "Seleccione un caso de la Unidad 3. Desarrolle hechos probados, derechos declarados vulnerados, razonamiento de la Corte y reparaciones. Distinga hechos probados de alegaciones. Entrega PDF o DOCX.",
+      "rubric": [
+        "Hechos probados (1-4)",
+        "Derechos y normas (1-4)",
+        "Razonamiento de la Corte (1-4)",
+        "Reparaciones y referencias (1-4)"
+      ]
+    }
+  ],
+  "workshop": {
+    "title": "Taller en vivo: simulación de audiencia ante la Corte IDH",
+    "week": 7,
+    "instructions": "Roles: representación de víctimas, Estado, Comisión y tribunal. Presentar hechos, argumentos, preguntas y medidas de reparación.",
+    "meeting_url_env": "DEMO_DDHH_MEETING_URL"
+  },
+  "glossary": [
+    [
+      "Dignidad humana",
+      "Valor inherente de cada persona que exige respeto y prohíbe instrumentalizarla."
+    ],
+    [
+      "Universalidad",
+      "Titularidad de derechos por toda persona, sin distinciones prohibidas."
+    ],
+    [
+      "Indivisibilidad",
+      "Los derechos forman un conjunto que no debe fragmentarse para negar protección."
+    ],
+    [
+      "Interdependencia",
+      "El disfrute de un derecho se relaciona con el ejercicio de otros."
+    ],
+    [
+      "Progresividad",
+      "Deber de avanzar mediante medidas deliberadas hacia la plena efectividad de derechos."
+    ],
+    [
+      "No regresividad",
+      "Criterio que exige justificación especialmente rigurosa para medidas deliberadamente retrocesivas."
+    ],
+    [
+      "Igualdad",
+      "Igual dignidad y protección jurídica de todas las personas."
+    ],
+    [
+      "No discriminación",
+      "Prohibición de distinciones injustificadas que menoscaben derechos."
+    ],
+    [
+      "Pro persona",
+      "Interpretación que favorece la protección más amplia dentro del marco jurídico aplicable."
+    ],
+    [
+      "Pro homine",
+      "Expresión tradicional del principio pro persona."
+    ],
+    [
+      "Ius cogens",
+      "Norma imperativa de derecho internacional general que no admite acuerdo en contrario."
+    ],
+    [
+      "Erga omnes",
+      "Obligación debida frente a la comunidad internacional en su conjunto, según el contexto."
+    ],
+    [
+      "Hábeas corpus",
+      "Garantía judicial para controlar la legalidad de una privación de libertad."
+    ],
+    [
+      "Amparo",
+      "Mecanismo judicial de tutela de derechos constitucionales."
+    ],
+    [
+      "Debido proceso",
+      "Garantías que ordenan un procedimiento justo e imparcial."
+    ],
+    [
+      "Presunción de inocencia",
+      "Regla de trato y juicio mientras no se establezca legalmente responsabilidad."
+    ],
+    [
+      "Detención arbitraria",
+      "Privación de libertad incompatible con la ley o las garantías aplicables."
+    ],
+    [
+      "Desaparición forzada",
+      "Privación de libertad atribuible al Estado seguida de negativa a reconocerla o informar el paradero, conforme al derecho aplicable."
+    ],
+    [
+      "Tortura",
+      "Acto intencional de sufrimiento grave con finalidad prohibida e intervención estatal, conforme a la definición convencional."
+    ],
+    [
+      "Trato cruel, inhumano o degradante",
+      "Conducta prohibida que lesiona gravemente integridad o dignidad."
+    ],
+    [
+      "Uso de la fuerza",
+      "Intervención coercitiva estatal sometida a legalidad, necesidad, proporcionalidad y control."
+    ],
+    [
+      "Necesidad",
+      "Uso de fuerza solo cuando sea imprescindible para un fin legítimo."
+    ],
+    [
+      "Proporcionalidad",
+      "Correspondencia entre intensidad de fuerza y amenaza u objetivo legítimo."
+    ],
+    [
+      "Rendición de cuentas",
+      "Deber de documentar, explicar y someter a control la actuación pública."
+    ],
+    [
+      "Cadena de custodia",
+      "Registro continuo de identificación, recolección, traslado y manejo de evidencias."
+    ],
+    [
+      "Reparación integral",
+      "Medidas para restituir derechos, compensar daños y prevenir repetición."
+    ],
+    [
+      "Jurisdicción internacional",
+      "Competencia de un órgano internacional atribuida por el derecho aplicable."
+    ],
+    [
+      "Control de convencionalidad",
+      "Contraste de normas y prácticas internas con obligaciones convencionales, según competencia."
+    ],
+    [
+      "Garantías judiciales",
+      "Salvaguardas para un procedimiento ante autoridad competente, independiente e imparcial."
+    ],
+    [
+      "Protección judicial",
+      "Derecho a un recurso efectivo frente a vulneraciones de derechos."
+    ]
+  ],
+  "survey": {
+    "title": "Encuesta de satisfacción docente",
+    "week": 16,
+    "questions": [
+      "La planificación fue clara.",
+      "Los materiales facilitaron el estudio.",
+      "Las actividades promovieron análisis crítico.",
+      "La retroalimentación fue útil.",
+      "La modalidad mixta facilitó la participación.",
+      "¿Qué debería mejorarse?"
+    ]
+  },
+  "students": [
+    [
+      "Ana María",
+      "Salcedo Rivas",
+      "ana.salcedo@demo.unes.local",
+      "V-00000011",
+      "Caracas"
+    ],
+    [
+      "Luis Fernando",
+      "Méndez Gil",
+      "luis.mendez@demo.unes.local",
+      "V-00000012",
+      "Caracas"
+    ],
+    [
+      "Daniela Paola",
+      "Rojas Peña",
+      "daniela.rojas@demo.unes.local",
+      "V-00000013",
+      "Caracas"
+    ],
+    [
+      "José Andrés",
+      "Castillo Vera",
+      "jose.castillo@demo.unes.local",
+      "V-00000014",
+      "Caracas"
+    ],
+    [
+      "Mariana Isabel",
+      "Fuentes León",
+      "mariana.fuentes@demo.unes.local",
+      "V-00000015",
+      "Caracas"
+    ],
+    [
+      "Carlos Eduardo",
+      "Paredes Mora",
+      "carlos.paredes@demo.unes.local",
+      "V-00000016",
+      "Caracas"
+    ],
+    [
+      "Valentina Sofía",
+      "Núñez Díaz",
+      "valentina.nunez@demo.unes.local",
+      "V-00000017",
+      "Caracas"
+    ],
+    [
+      "Miguel Ángel",
+      "Herrera Solís",
+      "miguel.herrera@demo.unes.local",
+      "V-00000018",
+      "Caracas"
+    ],
+    [
+      "Gabriela Alejandra",
+      "Torres Paz",
+      "gabriela.torres@demo.unes.local",
+      "V-00000019",
+      "Caracas"
+    ],
+    [
+      "Pedro Antonio",
+      "Vargas Ríos",
+      "pedro.vargas@demo.unes.local",
+      "V-00000020",
+      "Maracay"
+    ],
+    [
+      "Camila Fernanda",
+      "Silva Ortiz",
+      "camila.silva@demo.unes.local",
+      "V-00000021",
+      "Valencia"
+    ],
+    [
+      "Andrés Felipe",
+      "Molina Cruz",
+      "andres.molina@demo.unes.local",
+      "V-00000022",
+      "Barquisimeto"
+    ]
+  ],
+  "exam_bank": [
+    {
+      "type": "mcq",
+      "question": "¿En qué año se aprobó la DUDH?",
+      "options": [
+        "1945",
+        "1948",
+        "1966",
+        "1979"
+      ],
+      "answer": "1948",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La DUDH fue adoptada por la Asamblea General de la ONU.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "La Declaración de los Derechos del Hombre y del Ciudadano se aprobó en ____.",
+      "options": null,
+      "answer": "1789",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué principio afirma que los derechos corresponden a toda persona?",
+      "options": [
+        "Universalidad",
+        "Territorialidad",
+        "Reciprocidad"
+      ],
+      "answer": "Universalidad",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "La indivisibilidad significa que:",
+      "options": [
+        "Las categorías de derechos no deben fragmentarse como prescindibles",
+        "Solo los derechos civiles son exigibles"
+      ],
+      "answer": "Las categorías de derechos no deben fragmentarse como prescindibles",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La interdependencia expresa que el disfrute de un derecho puede incidir en otros.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "La progresividad exige:",
+      "options": [
+        "Avanzar en la efectividad de los derechos y justificar rigurosamente retrocesos",
+        "Eliminar garantías gradualmente"
+      ],
+      "answer": "Avanzar en la efectividad de los derechos y justificar rigurosamente retrocesos",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "La dignidad es fundamento central de los derechos de la ____.",
+      "options": null,
+      "answer": "persona",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué diferencia a la DUDH de la Declaración francesa de 1789?",
+      "options": [
+        "Órgano, contexto y proyección histórica",
+        "Ambas son tratados de la OEA"
+      ],
+      "answer": "Órgano, contexto y proyección histórica",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La universalidad hace depender los derechos de la ciudadanía.",
+      "options": null,
+      "answer": "false",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿En qué año se adoptaron los dos Pactos Internacionales?",
+      "options": [
+        "1948",
+        "1966",
+        "1984"
+      ],
+      "answer": "1966",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "Los dos Pactos y la DUDH integran la Carta Internacional de Derechos Humanos.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Cuál es materia del PIDESC?",
+      "options": [
+        "Derecho al trabajo",
+        "Derecho al sufragio exclusivamente"
+      ],
+      "answer": "Derecho al trabajo",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "ACNUDH significa Alto Comisionado de la ONU para los Derechos ____.",
+      "options": null,
+      "answer": "Humanos",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué tratado de 1984 aborda específicamente la tortura?",
+      "options": [
+        "Convención contra la Tortura",
+        "Estatuto de Roma"
+      ],
+      "answer": "Convención contra la Tortura",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "El Consejo de Derechos Humanos es un órgano basado en la Carta de la ONU.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "Una función del ACNUDH es:",
+      "options": [
+        "Promover y proteger derechos humanos",
+        "Aprobar leyes nacionales"
+      ],
+      "answer": "Promover y proteger derechos humanos",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "Los Pactos Internacionales fueron adoptados en ____.",
+      "options": null,
+      "answer": "1966",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "El Protocolo de Estambul orienta la documentación de:",
+      "options": [
+        "Tortura y malos tratos",
+        "Delitos tributarios"
+      ],
+      "answer": "Tortura y malos tratos",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La Convención contra la Tortura contiene obligaciones de prevención e investigación.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Quién adoptó la Declaración Americana en 1948?",
+      "options": [
+        "IX Conferencia Internacional Americana",
+        "Consejo de Europa"
+      ],
+      "answer": "IX Conferencia Internacional Americana",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La Convención Americana fue adoptada en San José en 1969.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué órgano recibe peticiones individuales en el sistema interamericano?",
+      "options": [
+        "CIDH",
+        "Corte Internacional de Justicia"
+      ],
+      "answer": "CIDH",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "La Corte IDH ejerce competencia:",
+      "options": [
+        "Contenciosa y consultiva",
+        "Legislativa y electoral"
+      ],
+      "answer": "Contenciosa y consultiva",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "Velásquez Rodríguez vs. Honduras se relaciona con desaparición ____.",
+      "options": null,
+      "answer": "forzada",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "Del Caracazo vs. Venezuela examinó uso desproporcionado de la fuerza.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "Montero Aranguren y otros vs. Venezuela se conoce como:",
+      "options": [
+        "Retén de Catia",
+        "El Amparo"
+      ],
+      "answer": "Retén de Catia",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "Familia Barrios vs. Venezuela examinó, entre otros, derechos a:",
+      "options": [
+        "Vida, integridad y libertad",
+        "Propiedad intelectual"
+      ],
+      "answer": "Vida, integridad y libertad",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "La Convención Americana también se denomina Pacto de ____.",
+      "options": null,
+      "answer": "San José",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La CIDH y la Corte IDH tienen idénticas funciones.",
+      "options": null,
+      "answer": "false",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué artículo de la CRBV regula la jerarquía constitucional de tratados de DDHH?",
+      "options": [
+        "19",
+        "22",
+        "23",
+        "27"
+      ],
+      "answer": "23",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "El artículo 19 consagra progresividad y no discriminación.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué artículo contiene la cláusula abierta de derechos inherentes?",
+      "options": [
+        "22",
+        "23",
+        "43",
+        "46"
+      ],
+      "answer": "22",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "El artículo 27 regula la acción de ____.",
+      "options": null,
+      "answer": "amparo",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué artículo reconoce el derecho a la vida?",
+      "options": [
+        "43",
+        "44",
+        "46"
+      ],
+      "answer": "43",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "El artículo 44 protege la libertad:",
+      "options": [
+        "Personal",
+        "De culto"
+      ],
+      "answer": "Personal",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "El artículo 46 protege la integridad física, psíquica y moral.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "El artículo 43 reconoce el derecho a la ____.",
+      "options": null,
+      "answer": "vida",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿Qué órgano constitucional promueve y defiende derechos humanos?",
+      "options": [
+        "Defensoría del Pueblo",
+        "Banco Central"
+      ],
+      "answer": "Defensoría del Pueblo",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La interpretación constitucional exige verificar el texto oficial vigente.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿En qué año se aprobó el Código de Conducta para funcionarios policiales?",
+      "options": [
+        "1966",
+        "1979",
+        "1990"
+      ],
+      "answer": "1979",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "¿En qué año se adoptaron los Principios Básicos sobre uso de fuerza?",
+      "options": [
+        "1979",
+        "1984",
+        "1990"
+      ],
+      "answer": "1990",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "El Código de Conducta limita la fuerza a lo estrictamente necesario.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "Antes de recurrir a la fuerza se debe, cuando sea posible:",
+      "options": [
+        "Usar medios no violentos",
+        "Usar armas preventivamente"
+      ],
+      "answer": "Usar medios no violentos",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "La fuerza debe cumplir criterios de legalidad, necesidad y ____.",
+      "options": null,
+      "answer": "proporcionalidad",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "Las lesiones ocasionadas durante una intervención exigen asistencia y reporte conforme a normas aplicables.",
+      "options": null,
+      "answer": "true",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "La cadena de custodia protege:",
+      "options": [
+        "Identidad, integridad y trazabilidad de evidencias",
+        "La sustitución de la investigación"
+      ],
+      "answer": "Identidad, integridad y trazabilidad de evidencias",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "mcq",
+      "question": "El Protocolo de Estambul documenta:",
+      "options": [
+        "Tortura y malos tratos",
+        "Infracciones de tránsito"
+      ],
+      "answer": "Tortura y malos tratos",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "fill",
+      "question": "Toda persona bajo custodia debe recibir trato ____.",
+      "options": null,
+      "answer": "digno",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "tf",
+      "question": "La rendición de cuentas es ajena a los estándares de DDHH.",
+      "options": null,
+      "answer": "false",
+      "feedback": "Respuesta basada en el instrumento y tema de la unidad. El docente debe contrastar la clave con la versión oficial vigente antes de publicar.",
+      "review_required": true
+    },
+    {
+      "type": "essay",
+      "question": "Explique cómo debe analizarse la obligación estatal de respetar y garantizar derechos ante una detención arbitraria. Identifique normas aplicables y garantías procesales.",
+      "rubric": "Hechos y problemas 25%; fuentes normativas 25%; aplicación argumentada 35%; claridad y referencias 15%.",
+      "answer_manual": true,
+      "review_required": true
+    },
+    {
+      "type": "essay",
+      "question": "Analice la relación entre progresividad, no regresividad y obligaciones estatales conforme al artículo 19 de la CRBV.",
+      "rubric": "Interpretación constitucional 30%; progresividad/no regresividad 30%; aplicación razonada 25%; redacción y fuentes 15%.",
+      "answer_manual": true,
+      "review_required": true
+    },
+    {
+      "type": "essay",
+      "question": "Ante un escenario hipotético de uso de fuerza policial con personas lesionadas, evalúe legalidad, necesidad, proporcionalidad, asistencia, reporte y rendición de cuentas.",
+      "rubric": "Análisis del escenario 20%; estándares 35%; medidas posteriores y control 30%; coherencia y fundamentación 15%.",
+      "answer_manual": true,
+      "review_required": true
+    }
+  ]
+}
