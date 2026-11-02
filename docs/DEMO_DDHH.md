@@ -25,7 +25,7 @@ $env:DEMO_DDHH_MEETING_URL = 'https://meet.jit.si/NombreDeSalaPrivada'
 python manage.py cargar_demo_ddhh
 ```
 
-La variable `DEMO_DDHH_PASSWORD` se aplica a las 13 cuentas ficticias (docente y doce estudiantes). Usa una clave temporal, compártela únicamente con el equipo de demostración y cámbiala/elimina las cuentas al finalizar. No reutilices contraseñas institucionales. La sala es opcional; solo se acepta URL HTTPS de Google Meet o Jitsi.
+También puedes definir estas variables en el archivo `.env` de la raíz del proyecto; el comando lo lee sin imprimir su contenido:\n\n```dotenv\nDEMO_DDHH_PASSWORD=Defina-Una-Clave-Temporal-Segura\nDEMO_DDHH_MEETING_URL=https://meet.jit.si/NombreDeSalaPrivada\n```\n\nLa variable `DEMO_DDHH_PASSWORD` se aplica a las 13 cuentas ficticias (docente y doce estudiantes). Usa una clave temporal, compártela únicamente con el equipo de demostración y cámbiala/elimina las cuentas al finalizar. No reutilices contraseñas institucionales. La sala es opcional; solo se acepta URL HTTPS de Google Meet o Jitsi.
 
 ## Idempotencia y limpieza
 
