@@ -48,6 +48,10 @@ class Command(BaseCommand):
             teacher = self.get_demo_user(group, TEACHER_EMAIL, TEACHER_CEDULA, "Carmen Elena", "Rondón Palacios", nuclei["Caracas"], "DOCENTE", "teacher", password)
             teacher.profile.programa_detalle = "Perfil ficticio de demostración: abogada, especialista en Derechos Humanos y Seguridad Ciudadana."
             teacher.profile.save(update_fields=["programa_detalle"])
+            existing_course = Course.objects.filter(codigo=COURSE_CODE).select_related("docente").first()
+            if existing_course and existing_course.docente_id != teacher.id:
+                if not existing_course.docente.groups.filter(pk=group.pk).exists():
+                    raise CommandError(f"Ya existe el código reservado {COURSE_CODE} asociado a una cuenta que no pertenece a esta demo; no se modificó.")
             course, _ = Course.objects.get_or_create(codigo=COURSE_CODE, defaults={
                 "titulo": data["course"]["title"], "docente": teacher, "nucleo": nuclei["Caracas"], "programa": program,
             })
@@ -206,6 +210,8 @@ class Command(BaseCommand):
         group = Group.objects.filter(name=DEMO_GROUP).first()
         course = Course.objects.filter(codigo=COURSE_CODE).first()
         if course:
+            if not group or not course.docente.groups.filter(pk=group.pk).exists():
+                raise CommandError("El curso con el código demo no está vinculado a un docente marcado como fixture; se cancela la eliminación por seguridad.")
             course.delete()
             self.stdout.write("Curso y datos académicos relacionados eliminados.")
         if group:
