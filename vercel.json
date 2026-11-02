@@ -1,0 +1,5 @@
+{
+  "buildCommand": "python manage.py migrate --run-syncdb --noinput && python manage.py collectstatic --noinput",
+  "builds": [{"src":"api/index.py","use":"@vercel/python","config":{"maxLambdaSize":"50mb"}}],
+  "routes": [{"src":"/(.*)","dest":"api/index.py"}]
+}
