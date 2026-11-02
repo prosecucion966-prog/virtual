@@ -125,6 +125,10 @@ class Command(BaseCommand):
                 exam_items.append(f"{number}. {question['question']}")
                 if question.get("options"):
                     exam_items.extend(f"   - {option}" for option in question["options"])
+                elif question["type"] == "tf":
+                    exam_items.append("   - Verdadero / Falso")
+                elif question["type"] == "fill":
+                    exam_items.append("   - Complete la oración.")
             for number, question in enumerate(data["exam_bank"][-3:], start=18):
                 exam_items.append(f"{number}. DESARROLLO: {question['question']}")
                 exam_items.append(f"   Rúbrica: {question['rubric']}")
