@@ -10,7 +10,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from lms.models import (
-    Activity, Announcement, Course, Enrollment, Grade, Message, Nucleo,
+    Activity, Announcement, CalendarEvent, Course, Enrollment, Grade, Message, Nucleo,
     Profile, Programa, Resource, Section, Submission,
 )
 
@@ -207,17 +207,37 @@ class Command(BaseCommand):
         )
 
     def delete_demo(self):
-        group = Group.objects.filter(name=DEMO_GROUP).first()
-        course = Course.objects.filter(codigo=COURSE_CODE).first()
-        if course:
-            if not group or not course.docente.groups.filter(pk=group.pk).exists():
-                raise CommandError("El curso con el código demo no está vinculado a un docente marcado como fixture; se cancela la eliminación por seguridad.")
-            course.delete()
-            self.stdout.write("Curso y datos académicos relacionados eliminados.")
-        if group:
+        with transaction.atomic():
+            group = Group.objects.filter(name=DEMO_GROUP).first()
+            course = Course.objects.filter(codigo=COURSE_CODE).first()
+            if group is None:
+                if course:
+                    raise CommandError("Existe el curso demo pero no su grupo de fixtures; se cancela la eliminación por seguridad.")
+                self.stdout.write(self.style.SUCCESS("No hay fixtures DDHH que eliminar."))
+                return
             users = User.objects.filter(groups=group)
+            if course and not course.docente.groups.filter(pk=group.pk).exists():
+                raise CommandError("El curso con el código demo no está vinculado a un docente marcado como fixture; se cancela la eliminación por seguridad.")
+            if course and Course.objects.filter(docente__in=users).exclude(pk=course.pk).exists():
+                raise CommandError("Una cuenta demo está asignada a otro curso. Retira esa relación antes de borrar las cuentas.")
+            if course and Enrollment.objects.filter(estudiante__in=users).exclude(curso=course).exists():
+                raise CommandError("Una cuenta demo está matriculada en otro curso. No se borrarán matrículas ajenas.")
+            if course and Submission.objects.filter(estudiante__in=users).exclude(actividad__curso=course).exists():
+                raise CommandError("Una cuenta demo tiene entregas fuera del curso demo. No se borrarán esos registros.")
+            if course and Grade.objects.filter(docente__in=users).exclude(entrega__actividad__curso=course).exists():
+                raise CommandError("La docente demo tiene calificaciones fuera del curso demo. No se borrarán esos registros.")
+            if Announcement.objects.filter(autor__in=users).exclude(titulo="Bienvenida · Derechos Humanos · Demo").exists():
+                raise CommandError("Una cuenta demo figura como autora de anuncios ajenos a la demo. No se borrarán esos datos.")
+            if Message.objects.filter(remitente__in=users).exclude(destinatario__in=users).exists() or Message.objects.filter(destinatario__in=users).exclude(remitente__in=users).exists():
+                raise CommandError("Una cuenta demo tiene mensajes con cuentas ajenas al grupo. No se borrarán esas conversaciones.")
+            if CalendarEvent.objects.filter(creado_por__in=users).exists():
+                raise CommandError("Una cuenta demo creó eventos de calendario. Revise esos registros antes de eliminarla.")
             count = users.count()
+            Announcement.objects.filter(autor__in=users, titulo="Bienvenida · Derechos Humanos · Demo").delete()
+            if course:
+                course.delete()
+                self.stdout.write("Curso y datos académicos relacionados eliminados.")
             users.delete()
             group.delete()
             self.stdout.write(f"{count} cuentas ficticias de demo eliminadas.")
-        self.stdout.write(self.style.SUCCESS("Limpieza de demo completada. Núcleos y programas de catálogo no se eliminan."))
+            self.stdout.write(self.style.SUCCESS("Limpieza de demo completada. Núcleos y programas de catálogo no se eliminan."))
