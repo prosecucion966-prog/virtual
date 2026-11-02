@@ -47,6 +47,8 @@ class Command(BaseCommand):
                 name = "Derecho" if not Programa.objects.filter(nombre="Derecho").exists() else "Derecho (Demo PFG)"
                 program, _ = Programa.objects.get_or_create(nombre=name, defaults={"categoria": "PFG", "nivel": "Pregrado", "activo": True})
             teacher = self.get_demo_user(group, TEACHER_EMAIL, TEACHER_CEDULA, "Carmen Elena", "Rondón Palacios", nuclei["Caracas"], "DOCENTE", "teacher", password)
+            teacher.profile.programa_detalle = "Perfil ficticio de demostración: abogada, especialista en Derechos Humanos y Seguridad Ciudadana."
+            teacher.profile.save(update_fields=["programa_detalle"])
             course, _ = Course.objects.get_or_create(codigo=COURSE_CODE, defaults={
                 "titulo": data["course"]["title"], "docente": teacher, "nucleo": nuclei["Caracas"], "programa": program,
             })
