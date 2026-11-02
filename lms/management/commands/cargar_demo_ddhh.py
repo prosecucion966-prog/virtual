@@ -90,7 +90,25 @@ class Command(BaseCommand):
                 activities[key] = obj
                 return obj
             for i, unit in enumerate(data["units"], start=1):
-                add_activity(f"quiz{i}", f"Cuestionario {i}: {unit['title']}", "Cuestionario", i * 2, "10 reactivos de opción múltiple, verdadero/falso y completación; tiempo previsto 30 minutos; máximo 2 intentos; calificación sobre 20. Banco preliminar incluido en lms/data/demo_ddhh.json. El proyecto actual no incorpora motor de cuestionarios, temporizador ni aleatorización automática: la aplicación efectiva requiere desarrollo adicional.", 20)
+                quiz_questions = data["quizzes"][i - 1]["questions"]
+                question_text = []
+                for number, question in enumerate(quiz_questions, start=1):
+                    question_text.append(f"{number}. {question['question']}")
+                    if question.get("options"):
+                        question_text.extend(f"   - {option}" for option in question["options"])
+                    elif question["type"] == "tf":
+                        question_text.append("   - Verdadero / Falso")
+                    elif question["type"] == "fill":
+                        question_text.append("   - Complete la oración.")
+                quiz_instructions = (
+                    "Cuestionario de demostración · 10 preguntas · tiempo previsto: 30 minutos · "
+                    "máximo: 2 intentos · calificación: 20 puntos.\n\n"
+                    + "\n".join(question_text)
+                    + "\n\nNota técnica: el LMS actual no procesa respuestas, intentos, temporizador ni calificación automática. "
+                    "Este listado permite revisar los reactivos; las claves y retroalimentaciones preliminares están en el JSON del repositorio "
+                    "y requieren validación docente antes de su uso."
+                )
+                add_activity(f"quiz{i}", f"Cuestionario {i}: {unit['title']}", "Cuestionario", i * 2, quiz_instructions, 20)
             for forum in data["forums"]:
                 add_activity("forum" + str(len([k for k in activities if k.startswith("forum")]) + 1), forum["title"], "Foro", forum["week"], forum["instructions"] + "\nRÚBRICA (4 criterios, 1-4 puntos): " + "; ".join(forum["rubric"]) + "\nConversión: puntos/16 × 20.", 20)
             for assignment in data["assignments"]:
