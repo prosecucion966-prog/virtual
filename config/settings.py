@@ -15,7 +15,7 @@ DATABASES={"default":dj_database_url.config(default=os.getenv("DATABASE_URL",f"s
 AUTH_PASSWORD_VALIDATORS=[{"NAME":"django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},{"NAME":"django.contrib.auth.password_validation.MinimumLengthValidator","OPTIONS":{"min_length":10}},{"NAME":"django.contrib.auth.password_validation.CommonPasswordValidator"},{"NAME":"django.contrib.auth.password_validation.NumericPasswordValidator"}]
 PASSWORD_HASHERS=["django.contrib.auth.hashers.Argon2PasswordHasher","django.contrib.auth.hashers.PBKDF2PasswordHasher"]
 LANGUAGE_CODE="es-ve"; TIME_ZONE="America/Caracas"; USE_I18N=True; USE_TZ=True
-STATIC_URL="/static/"; STATIC_ROOT=BASE_DIR/"staticfiles"
+STATIC_URL="/static/"; STATIC_ROOT=BASE_DIR/"staticfiles"\nSTATICFILES_DIRS=[BASE_DIR/"static"]
 STORAGES={"default":{"BACKEND":"django.core.files.storage.FileSystemStorage"},"staticfiles":{"BACKEND":"whitenoise.storage.CompressedManifestStaticFilesStorage"}}
 DEFAULT_AUTO_FIELD="django.db.models.BigAutoField"
 LOGIN_URL="login"; LOGIN_REDIRECT_URL="dashboard"; LOGOUT_REDIRECT_URL="home"
