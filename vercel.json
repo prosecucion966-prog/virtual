@@ -1,5 +1,6 @@
 {
-  "buildCommand": "python manage.py migrate --run-syncdb --noinput && python manage.py collectstatic --noinput",
-  "builds": [{"src":"api/index.py","use":"@vercel/python","config":{"maxLambdaSize":"50mb"}}],
-  "routes": [{"src":"/(.*)","dest":"api/index.py"}]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "django",
+  "buildCommand": "python manage.py makemigrations lms --noinput && python manage.py migrate --noinput && python manage.py collectstatic --noinput",
+  "regions": ["iad1"]
 }
