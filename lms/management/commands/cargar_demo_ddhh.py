@@ -116,8 +116,22 @@ class Command(BaseCommand):
             meeting = os.environ.get(data["workshop"]["meeting_url_env"], "").strip()
             workshop_text = data["workshop"]["instructions"] + (f"\nSala configurada: {meeting}" if meeting.startswith(("https://meet.google.com/", "https://meet.jit.si/")) else "\nSala sin configurar. Define DEMO_DDHH_MEETING_URL con una URL Jitsi/Google Meet válida.")
             add_activity("workshop", data["workshop"]["title"], "Taller", data["workshop"]["week"], workshop_text, 20)
-            add_activity("midterm", "Examen parcial · Semana 8", "Cuestionario", 8, "20 preguntas previstas: 17 objetivas aleatorizadas desde un banco validado y 3 preguntas de desarrollo corregidas manualmente. 60 minutos. En este proyecto no existe motor de examen, aleatorización, temporizador ni flujo de corrección manual; actividad informativa para la demo.", 20)
-            add_activity("final", "Examen final · Semana 16", "Cuestionario", 16, "20 preguntas previstas: 17 objetivas aleatorizadas desde un banco validado y 3 preguntas de desarrollo corregidas manualmente. 60 minutos. En este proyecto no existe motor de examen, aleatorización, temporizador ni flujo de corrección manual; actividad informativa para la demo.", 20)
+            exam_items = []
+            for number, question in enumerate(data["exam_bank"][:17], start=1):
+                exam_items.append(f"{number}. {question['question']}")
+                if question.get("options"):
+                    exam_items.extend(f"   - {option}" for option in question["options"])
+            for number, question in enumerate(data["exam_bank"][-3:], start=18):
+                exam_items.append(f"{number}. DESARROLLO: {question['question']}")
+                exam_items.append(f"   Rúbrica: {question['rubric']}")
+            exam_text = (
+                "Examen demostrativo · 20 preguntas (17 objetivas y 3 de desarrollo) · 60 minutos. "
+                "Las preguntas de desarrollo requieren corrección manual. El motor actual no implementa "
+                "aleatorización, temporizador, persistencia de respuestas ni corrección automática.\\n\\n"
+                + "\\n".join(exam_items)
+            )
+            add_activity("midterm", "Examen parcial · Semana 8", "Cuestionario", 8, exam_text, 20)
+            add_activity("final", "Examen final · Semana 16", "Cuestionario", 16, exam_text, 20)
             glossary_text = "\n".join(f"{term}: {definition}" for term, definition in data["glossary"])
             add_activity("glossary", "Glosario colaborativo de derechos humanos", "Wiki", 10, "Glosario inicial de 30 términos. La colaboración simultánea/versionado no está implementada en el modelo actual.\n" + glossary_text, 20)
             survey_text = "\n".join(f"{i+1}. {question}" for i, question in enumerate(data["survey"]["questions"]))
