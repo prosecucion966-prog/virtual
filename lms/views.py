@@ -117,3 +117,129 @@ def courses(request):
  if p and p.rol=="student": qs=qs.filter(programa__nombre=p.programa_detalle,nucleo=p.nucleo)
  if p and p.rol=="nucleus_admin": qs=qs.filter(nucleo=p.nucleo)
  return render(request,"courses.html",{"courses":qs.select_related("nucleo","programa","docente")})
+
+
+# --- Gestión de aulas y contenidos académicos ---
+from .models import Section, Resource, Activity
+from django.urls import reverse
+from django.core.exceptions import PermissionDenied
+
+def _academic_profile(request):
+    profile = getattr(request.user, "profile", None)
+    if not profile:
+        raise PermissionDenied
+    return profile
+
+def _can_manage_all(profile, user):
+    return user.is_superuser or profile.rol in ("superadmin", "nucleus_admin")
+
+def _get_managed_course(request, pk):
+    profile = _academic_profile(request)
+    course = get_object_or_404(Course, pk=pk)
+    if profile.rol == "nucleus_admin" and course.nucleo_id != profile.nucleo_id:
+        raise PermissionDenied
+    if not _can_manage_all(profile, request.user) and not (
+        profile.rol == "teacher" and course.docente_id == request.user.id
+    ):
+        raise PermissionDenied
+    return course
+
+class ManagedCourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ("titulo", "codigo", "descripcion", "programa", "nucleo", "docente", "periodo", "publicado")
+        widgets = {
+            "titulo": forms.TextInput(attrs={"class": "form-control"}),
+            "codigo": forms.TextInput(attrs={"class": "form-control"}),
+            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "programa": forms.Select(attrs={"class": "form-select"}),
+            "nucleo": forms.Select(attrs={"class": "form-select"}),
+            "docente": forms.Select(attrs={"class": "form-select"}),
+            "periodo": forms.TextInput(attrs={"class": "form-control"}),
+            "publicado": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+    def __init__(self, *args, **kwargs):
+        profile = kwargs.pop("profile", None)
+        super().__init__(*args, **kwargs)
+        self.fields["docente"].queryset = User.objects.filter(profile__rol="teacher", is_active=True).order_by("last_name", "first_name")
+        if profile and profile.rol == "nucleus_admin":
+            self.fields["nucleo"].queryset = Nucleo.objects.filter(pk=profile.nucleo_id)
+            self.fields["nucleo"].initial = profile.nucleo_id
+
+class ManagedSectionForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        fields = ("titulo", "contenido", "orden")
+        widgets = {"titulo": forms.TextInput(attrs={"class":"form-control"}), "contenido": forms.Textarea(attrs={"class":"form-control","rows":4}), "orden": forms.NumberInput(attrs={"class":"form-control"})}
+
+class ManagedResourceForm(forms.ModelForm):
+    class Meta:
+        model = Resource
+        fields = ("titulo", "tipo", "url", "contenido", "archivo")
+        widgets = {"titulo": forms.TextInput(attrs={"class":"form-control"}), "tipo": forms.Select(attrs={"class":"form-select"}), "url": forms.URLInput(attrs={"class":"form-control","placeholder":"https://"}), "contenido": forms.Textarea(attrs={"class":"form-control","rows":4}), "archivo": forms.ClearableFileInput(attrs={"class":"form-control"})}
+
+class ManagedActivityForm(forms.ModelForm):
+    class Meta:
+        model = Activity
+        fields = ("titulo", "tipo", "instrucciones", "fecha_limite", "puntos", "publicado")
+        widgets = {"titulo": forms.TextInput(attrs={"class":"form-control"}), "tipo": forms.Select(attrs={"class":"form-select"}), "instrucciones": forms.Textarea(attrs={"class":"form-control","rows":4}), "fecha_limite": forms.DateTimeInput(attrs={"class":"form-control","type":"datetime-local"}), "puntos": forms.NumberInput(attrs={"class":"form-control","step":"0.01"}), "publicado": forms.CheckboxInput(attrs={"class":"form-check-input"})}
+
+@login_required
+def manage_courses(request):
+    profile = _academic_profile(request)
+    if profile.rol not in ("superadmin", "nucleus_admin", "teacher") and not request.user.is_superuser:
+        raise PermissionDenied
+    courses_qs = Course.objects.select_related("nucleo", "programa", "docente")
+    if profile.rol == "teacher" and not request.user.is_superuser:
+        courses_qs = courses_qs.filter(docente=request.user)
+    if profile.rol == "nucleus_admin":
+        courses_qs = courses_qs.filter(nucleo=profile.nucleo)
+    return render(request, "lms/manage_courses.html", {"courses": courses_qs})
+
+@login_required
+def course_create(request):
+    profile = _academic_profile(request)
+    if not _can_manage_all(profile, request.user):
+        raise PermissionDenied
+    form = ManagedCourseForm(request.POST or None, profile=profile)
+    if request.method == "POST" and form.is_valid():
+        course = form.save()
+        messages.success(request, "Aula creada correctamente.")
+        return redirect("manage_course_detail", pk=course.pk)
+    return render(request, "lms/form.html", {"form": form, "heading": "Crear aula virtual", "back_url": reverse("manage_courses")})
+
+@login_required
+def manage_course_detail(request, pk):
+    course = _get_managed_course(request, pk)
+    return render(request, "lms/manage_course_detail.html", {"course": course})
+
+@login_required
+def section_create(request, pk):
+    course = _get_managed_course(request, pk)
+    form = ManagedSectionForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        section = form.save(commit=False); section.curso = course; section.save()
+        messages.success(request, "Unidad o tema agregado.")
+        return redirect("manage_course_detail", pk=course.pk)
+    return render(request, "lms/form.html", {"form": form, "heading": "Agregar unidad o tema", "back_url": reverse("manage_course_detail", args=[course.pk])})
+
+@login_required
+def resource_create(request, pk, section_id):
+    course = _get_managed_course(request, pk)
+    section = get_object_or_404(Section, pk=section_id, curso=course)
+    form = ManagedResourceForm(request.POST or None, request.FILES or None)
+    if request.method == "POST" and form.is_valid():
+        resource = form.save(commit=False); resource.seccion = section; resource.save()
+        messages.success(request, "Material agregado a la unidad.")
+        return redirect("manage_course_detail", pk=course.pk)
+    return render(request, "lms/form.html", {"form": form, "heading": "Agregar material o recurso", "back_url": reverse("manage_course_detail", args=[course.pk])})
+
+@login_required
+def activity_create(request, pk):
+    course = _get_managed_course(request, pk)
+    form = ManagedActivityForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        activity = form.save(commit=False); activity.curso = course; activity.save()
+        messages.success(request, "Actividad creada.")
+        return redirect("manage_course_detail", pk=course.pk)
+    return render(request, "lms/form.html", {"form": form, "heading": "Crear actividad o evaluación", "back_url": reverse("manage_course_detail", args=[course.pk])})
