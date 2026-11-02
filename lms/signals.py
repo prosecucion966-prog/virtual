@@ -10,7 +10,7 @@ def seed_catalogs(sender,**kwargs):
  if sender.name!="lms": return
  for name in NUCLEOS: Nucleo.objects.get_or_create(nombre=name)
  for name in PNF: Programa.objects.get_or_create(nombre=name,defaults={"categoria":"PNF"})
- for name in PFG: Programa.objects.get_or_create(nombre=name,defaults={"categoria":"PFG"})
+ for name in PFG: Programa.objects.get_or_create(nombre=name,defaults={"categoria":"PFG"})\n Programa.objects.get_or_create(nombre="Seguridad Ciudadana",defaults={"categoria":"PNFA"})
  for nivel in ["Especialista","Maestría","Doctorado"]:
   Programa.objects.get_or_create(nombre=f"{nivel} en Seguridad Ciudadana",defaults={"categoria":"PNFA","nivel":nivel})
  for name in DEPS: Dependencia.objects.get_or_create(nombre=name)
