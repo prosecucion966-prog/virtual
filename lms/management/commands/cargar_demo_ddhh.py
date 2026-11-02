@@ -218,13 +218,22 @@ class Command(BaseCommand):
             users = User.objects.filter(groups=group)
             if course and not course.docente.groups.filter(pk=group.pk).exists():
                 raise CommandError("El curso con el código demo no está vinculado a un docente marcado como fixture; se cancela la eliminación por seguridad.")
-            if course and Course.objects.filter(docente__in=users).exclude(pk=course.pk).exists():
+            other_courses = Course.objects.filter(docente__in=users)
+            other_enrollments = Enrollment.objects.filter(estudiante__in=users)
+            other_submissions = Submission.objects.filter(estudiante__in=users)
+            other_grades = Grade.objects.filter(docente__in=users)
+            if course:
+                other_courses = other_courses.exclude(pk=course.pk)
+                other_enrollments = other_enrollments.exclude(curso=course)
+                other_submissions = other_submissions.exclude(actividad__curso=course)
+                other_grades = other_grades.exclude(entrega__actividad__curso=course)
+            if other_courses.exists():
                 raise CommandError("Una cuenta demo está asignada a otro curso. Retira esa relación antes de borrar las cuentas.")
-            if course and Enrollment.objects.filter(estudiante__in=users).exclude(curso=course).exists():
+            if other_enrollments.exists():
                 raise CommandError("Una cuenta demo está matriculada en otro curso. No se borrarán matrículas ajenas.")
-            if course and Submission.objects.filter(estudiante__in=users).exclude(actividad__curso=course).exists():
+            if other_submissions.exists():
                 raise CommandError("Una cuenta demo tiene entregas fuera del curso demo. No se borrarán esos registros.")
-            if course and Grade.objects.filter(docente__in=users).exclude(entrega__actividad__curso=course).exists():
+            if other_grades.exists():
                 raise CommandError("La docente demo tiene calificaciones fuera del curso demo. No se borrarán esos registros.")
             if Announcement.objects.filter(autor__in=users).exclude(titulo="Bienvenida · Derechos Humanos · Demo").exists():
                 raise CommandError("Una cuenta demo figura como autora de anuncios ajenos a la demo. No se borrarán esos datos.")
