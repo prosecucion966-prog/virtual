@@ -127,8 +127,8 @@ class Command(BaseCommand):
             exam_text = (
                 "Examen demostrativo · 20 preguntas (17 objetivas y 3 de desarrollo) · 60 minutos. "
                 "Las preguntas de desarrollo requieren corrección manual. El motor actual no implementa "
-                "aleatorización, temporizador, persistencia de respuestas ni corrección automática.\\n\\n"
-                + "\\n".join(exam_items)
+                "aleatorización, temporizador, persistencia de respuestas ni corrección automática.\n\n"
+                + "\n".join(exam_items)
             )
             add_activity("midterm", "Examen parcial · Semana 8", "Cuestionario", 8, exam_text, 20)
             add_activity("final", "Examen final · Semana 16", "Cuestionario", 16, exam_text, 20)
