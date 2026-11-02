@@ -14,13 +14,13 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-python manage.py migrate --run-syncdb
+python manage.py makemigrations lms\npython manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
 ## Producción
-Vercel ejecuta migraciones y collectstatic durante el build. Las variables DATABASE_URL y SECRET_KEY se configuran como secretos del proyecto Vercel. La rama production de Neon se usa para producción y una rama aislada para previews.
+Vercel ejecuta las migraciones versionadas y collectstatic durante el build. Las migraciones de modelos deben generarse y confirmarse en Git antes del despliegue. Las variables DATABASE_URL y SECRET_KEY se configuran como secretos del proyecto Vercel. La rama production de Neon se usa para producción y una rama aislada para previews.
 
 Para habilitar verificación de correo y recuperación de contraseña configure EMAIL_HOST, EMAIL_PORT, EMAIL_USE_TLS, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD y DEFAULT_FROM_EMAIL en Vercel.
 

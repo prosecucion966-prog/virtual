@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "django",
-  "buildCommand": "python manage.py makemigrations lms --noinput && python manage.py migrate --noinput && python manage.py collectstatic --noinput",
+  "buildCommand": "python manage.py migrate --noinput && python manage.py collectstatic --noinput",
   "regions": ["iad1"]
 }
