@@ -4,6 +4,7 @@ from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 
+from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -31,7 +32,7 @@ class Command(BaseCommand):
         if options["borrar"]:
             self.delete_demo()
             return
-        password = os.environ.get("DEMO_DDHH_PASSWORD", "").strip()
+        password = self.env_value("DEMO_DDHH_PASSWORD").strip()
         if len(password) < 10:
             raise CommandError("Define DEMO_DDHH_PASSWORD en el entorno con al menos 10 caracteres. No se usa una clave por defecto.")
         data_path = Path(__file__).resolve().parents[2] / "data" / "demo_ddhh.json"
@@ -116,7 +117,7 @@ class Command(BaseCommand):
                 add_activity("forum" + str(len([k for k in activities if k.startswith("forum")]) + 1), forum["title"], "Foro", forum["week"], forum["instructions"] + "\nRÚBRICA (4 criterios, 1-4 puntos): " + "; ".join(forum["rubric"]) + "\nConversión: puntos/16 × 20.", 20)
             for assignment in data["assignments"]:
                 add_activity("task" + str(len([k for k in activities if k.startswith("task")]) + 1), assignment["title"], "Tarea", assignment["week"], assignment["instructions"] + "\nRÚBRICA (4 criterios, 1-4 puntos): " + "; ".join(assignment["rubric"]) + "\nConversión: puntos/16 × 20.", 20)
-            meeting = os.environ.get(data["workshop"]["meeting_url_env"], "").strip()
+            meeting = self.env_value(data["workshop"]["meeting_url_env"]).strip()
             workshop_text = data["workshop"]["instructions"] + (f"\nSala configurada: {meeting}" if meeting.startswith(("https://meet.google.com/", "https://meet.jit.si/")) else "\nSala sin configurar. Define DEMO_DDHH_MEETING_URL con una URL Jitsi/Google Meet válida.")
             add_activity("workshop", data["workshop"]["title"], "Taller", data["workshop"]["week"], workshop_text, 20)
             exam_items = []
@@ -169,6 +170,21 @@ class Command(BaseCommand):
             f"Demo DDHH cargada. Curso={COURSE_CODE}; docente={TEACHER_EMAIL}; estudiantes={len(students)}; unidades={len(data['units'])}; actividades={len(activities)}."
         ))
         self.stdout.write("Credenciales: usa la clave definida en DEMO_DDHH_PASSWORD. No se imprimen contraseñas.")
+
+    def env_value(self, key):
+        value = os.environ.get(key)
+        if value:
+            return value
+        env_file = Path(settings.BASE_DIR) / ".env"
+        if env_file.is_file():
+            for raw_line in env_file.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                name, _, candidate = line.partition("=")
+                if name.strip() == key:
+                    return candidate.strip().strip("'").strip('"')
+        return ""
 
     def get_demo_user(self, group, email, cedula, first, last, nucleus, type_code, role, password):
         user = User.objects.filter(username=email).first()
