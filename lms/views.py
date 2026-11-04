@@ -458,7 +458,7 @@ class UnidadCurricularChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         version = obj.get_version_malla_display()
         nivel = obj.semestre or obj.trayecto or "Trayecto no indicado"
-        return f"{obj.programa.nombre} · {version} · {nivel} · {obj.nombre}"
+        return f"{version} · {nivel} · {obj.nombre}"
 
 
 class ProgramaUnidadAssignmentForm(forms.Form):
@@ -489,6 +489,13 @@ class ProgramaUnidadAssignmentForm(forms.Form):
 
 
 class AdminDocenteForm(ProgramaUnidadAssignmentForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.order_fields([
+            "nombres", "apellidos", "correo", "cedula", "telefono", "nucleo",
+            "programa", "unidades", "periodo", "password", "confirmar_password",
+        ])
+
     nombres = forms.CharField(max_length=150, label="Nombres", widget=forms.TextInput(attrs={"class": "form-control"}))
     apellidos = forms.CharField(max_length=150, label="Apellidos", widget=forms.TextInput(attrs={"class": "form-control"}))
     correo = forms.EmailField(label="Correo institucional", widget=forms.EmailInput(attrs={"class": "form-control"}))
