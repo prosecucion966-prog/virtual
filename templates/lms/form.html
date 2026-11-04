@@ -1,22 +1,121 @@
-{% extends "base.html" %}{% block title %}{{ heading }} · UNES<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const search = document.getElementById("filtro-unidades");
-  if (!search) return;
-  const options = Array.from(document.querySelectorAll(".curriculum-option"));
-  search.addEventListener("input", function () {
-    const term = search.value.trim().toLocaleLowerCase("es");
-    options.forEach(function (option) {
-      option.hidden = !option.textContent.toLocaleLowerCase("es").includes(term);
-    });
-  });
-});
-</script>
+{% extends "base.html" %}
+{% block title %}{{ heading }} · UNES{% endblock %}
+{% block content %}
+<p><a href="{{ back_url }}">← Volver</a></p>
+<div class="panel mx-auto" style="max-width: 820px">
+  <h1 class="h3 fw-bold mb-2">{{ heading }}</h1>
+  {% if help_text %}<p class="text-secondary mb-4">{{ help_text }}</p>{% endif %}
+  <form method="post" enctype="multipart/form-data" id="admin-form">
+    {% csrf_token %}
+    {% for field in form %}
+      {% if field.name == "unidades" %}
+        <div class="mb-4" id="unidades-wrapper">
+          <label class="form-label fw-semibold">{{ field.label }}</label>
+          <div class="small text-secondary mb-2" id="unidades-hint">Primero selecciona un programa académico.</div>
+          <div class="border rounded p-3 curriculum-list" id="unidades-list">
+            {% for checkbox in field %}
+              <label class="curriculum-option d-flex align-items-start gap-2 py-2 border-bottom">
+                <span class="pt-1">{{ checkbox.tag }}</span>
+                <span class="flex-grow-1">{{ checkbox.choice_label }}</span>
+              </label>
+            {% empty %}
+              <p class="text-secondary mb-0" id="unidades-empty">No hay materias para mostrar. Selecciona un programa.</p>
+            {% endfor %}
+          </div>
+          {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        </div>
+      {% else %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+          {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Guardar</button>
+    <a class="btn btn-outline-secondary" href="{{ back_url }}">Cancelar</a>
+  </form>
+</div>
 <style>
-.curriculum-picker-list { max-height: 420px; overflow-y: auto; background: var(--bs-body-bg, #fff); }
+.curriculum-list { max-height: 390px; overflow-y: auto; }
 .curriculum-option { cursor: pointer; line-height: 1.45; overflow-wrap: anywhere; }
 .curriculum-option:last-child { border-bottom: 0 !important; }
 .curriculum-option:hover { background: rgba(13,110,253,.06); }
-.curriculum-option input { flex: 0 0 auto; margin-top: .15rem; }
-.curriculum-option-label { min-width: 0; white-space: normal; }
+.curriculum-option input { flex: 0 0 auto; margin-top: .2rem; }
 </style>
-{% endblock %}{% block content %}<p><a href="{{ back_url }}">← Volver</a></p><div class="panel mx-auto" style="max-width:760px"><h1 class="h3 fw-bold mb-2">{{ heading }}</h1>{% if help_text %}<p class="text-secondary mb-4">{{ help_text }}</p>{% else %}<div class="mb-4"></div>{% endif %}<form method="post" enctype="multipart/form-data">{% csrf_token %}{% for field in form %}<div class="mb-3 {% if field.name == 'unidades' %}curriculum-picker{% endif %}">{% if field.name == "unidades" %}<div class="d-flex justify-content-between align-items-center gap-2 mb-2"><label class="form-label fw-semibold mb-0" for="filtro-unidades">{{ field.label }}</label><span class="badge text-bg-primary">{{ field|length }} disponibles</span></div><input id="filtro-unidades" class="form-control mb-2" type="search" placeholder="Buscar materia, programa o semestre..." autocomplete="off"><div class="curriculum-picker-list border rounded p-3" role="group" aria-label="Unidades curriculares disponibles">{% for checkbox in field %}<label class="curriculum-option d-flex align-items-start gap-2 py-2 border-bottom"><span class="pt-1">{{ checkbox.tag }}</span><span class="curriculum-option-label">{{ checkbox.choice_label }}</span></label>{% endfor %}</div>{% else %}{% if field.field.widget.input_type == "checkbox" %}<div class="form-check">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>{% else %}<label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}{% endif %}{% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}<button class="btn btn-primary">Guardar</button> <a class="btn btn-outline-secondary" href="{{ back_url }}">Cancelar</a></form></div>{% endblock %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const program = document.getElementById("id_programa");
+  const list = document.getElementById("unidades-list");
+  const hint = document.getElementById("unidades-hint");
+  if (!program || !list) return;
+
+  function showMessage(message) {
+    list.replaceChildren();
+    const p = document.createElement("p");
+    p.className = "text-secondary mb-0";
+    p.textContent = message;
+    list.appendChild(p);
+  }
+
+  async function loadUnits(programId) {
+    if (!programId) {
+      showMessage("Selecciona un programa para ver sus materias.");
+      hint.textContent = "Las materias se cargarán al elegir un programa.";
+      return;
+    }
+    showMessage("Cargando unidades curriculares…");
+    hint.textContent = "Mostrando únicamente las materias del programa seleccionado.";
+    try {
+      const response = await fetch("/administracion/programas/" + encodeURIComponent(programId) + "/unidades/", {
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      });
+      if (!response.ok) throw new Error("No se pudieron cargar las materias.");
+      const data = await response.json();
+      list.replaceChildren();
+      if (!data.unidades.length) {
+        showMessage("Este programa todavía no tiene unidades curriculares activas.");
+        return;
+      }
+      data.unidades.forEach(function (unit, index) {
+        const label = document.createElement("label");
+        label.className = "curriculum-option d-flex align-items-start gap-2 py-2 border-bottom";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.className = "form-check-input";
+        input.name = "unidades";
+        input.value = unit.id;
+        input.id = "id_unidades_" + index;
+        const textWrap = document.createElement("span");
+        textWrap.className = "flex-grow-1";
+        const title = document.createElement("span");
+        title.className = "d-block fw-semibold";
+        title.textContent = unit.label;
+        const detail = document.createElement("small");
+        detail.className = "text-secondary";
+        detail.textContent = unit.detalle;
+        textWrap.append(title, detail);
+        label.append(input, textWrap);
+        list.appendChild(label);
+      });
+      hint.textContent = data.unidades.length + " materias disponibles. Puedes seleccionar una o varias.";
+    } catch (error) {
+      showMessage("No fue posible cargar las materias. Vuelve a seleccionar el programa.");
+      hint.textContent = error.message;
+    }
+  }
+
+  program.addEventListener("change", function () {
+    loadUnits(program.value);
+  });
+
+  if (program.value && list.querySelector('input[name="unidades"]')) {
+    hint.textContent = "Materias del programa seleccionado. Puedes marcar varias.";
+  } else {
+    loadUnits(program.value);
+  }
+});
+</script>
+{% endblock %}
