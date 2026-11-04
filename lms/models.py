@@ -156,3 +156,36 @@ class UnidadCurricular(models.Model):
 
     def __str__(self):
         return f"{self.programa.nombre} · {self.codigo} · {self.nombre}"
+
+
+class TeachingAssignment(models.Model):
+    docente = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+        related_name="asignaciones_docentes",
+    )
+    nucleo = models.ForeignKey(
+        Nucleo, on_delete=models.PROTECT, related_name="asignaciones_docentes",
+    )
+    unidad_curricular = models.ForeignKey(
+        UnidadCurricular, on_delete=models.PROTECT,
+        related_name="asignaciones_docentes",
+    )
+    periodo = models.CharField(max_length=80)
+    aula = models.OneToOneField(
+        Course, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="asignacion_docente",
+    )
+    activa = models.BooleanField(default=True)
+    creada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["docente__last_name", "unidad_curricular__programa__nombre", "unidad_curricular__nombre"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["docente", "nucleo", "unidad_curricular", "periodo"],
+                name="uq_docente_nucleo_uc_periodo",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.docente.get_full_name()} · {self.unidad_curricular.nombre} · {self.nucleo.nombre}"
