@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Centro de control · UNES{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+ <div><div class="eyebrow text-primary">ADMINISTRACIÓN INSTITUCIONAL</div><h1 class="h2 fw-bold mb-1">Centro de control</h1><p class="text-secondary mb-0">Gestiona usuarios, núcleos, programas, aulas y comunicaciones de la UNES.</p></div>
+ <a class="btn btn-outline-primary" href="/admin/">Administración avanzada Django</a>
+</div>
+<div class="row g-3 mb-4">
+ {% for label,value in stats %}
+ <div class="col-6 col-lg-3"><div class="stat h-100"><div class="number">{{ value }}</div><div class="small text-secondary">{{ label }}</div></div></div>
+ {% endfor %}
+</div>
+<div class="row g-3 mb-4">
+ <div class="col-12"><h2 class="h5 fw-bold">Acciones administrativas</h2></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_users' %}"><span class="admin-action-icon">♙</span><strong>Usuarios y permisos</strong><small>Verificar, activar y suspender cuentas</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'course_create' %}"><span class="admin-action-icon">▣</span><strong>Crear aula virtual</strong><small>Asignar programa, núcleo y docente</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'manage_courses' %}"><span class="admin-action-icon">▤</span><strong>Gestionar aulas</strong><small>Revisar cursos y contenidos</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_announcement_create' %}"><span class="admin-action-icon">✉</span><strong>Publicar anuncio</strong><small>Comunicación institucional o por núcleo</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_nucleo_create' %}"><span class="admin-action-icon">⌖</span><strong>Crear núcleo</strong><small>Ampliar el catálogo de sedes</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_programa_create' %}"><span class="admin-action-icon">▦</span><strong>Crear programa</strong><small>PNF, PNFA o PFG</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="/admin/lms/"><span class="admin-action-icon">⚙</span><strong>Catálogos y registros</strong><small>Acceso al administrador de Django</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="/admin/lms/auditlog/"><span class="admin-action-icon">◷</span><strong>Auditoría</strong><small>Consultar registros de actividad</small></a></div>
+</div>
+<div class="row g-4">
+ <div class="col-lg-7"><div class="panel h-100"><div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 mb-0">Solicitudes pendientes</h2><a href="{% url 'admin_users' %}?estado=pendiente_verificacion">Ver todas</a></div>
+ {% for p in pending_profiles %}<div class="d-flex justify-content-between align-items-center gap-2 border-top py-3"><div><strong>{{ p.user.get_full_name|default:p.user.email }}</strong><div class="small text-secondary">{{ p.user.email }} · {{ p.get_rol_display }} · {{ p.nucleo.nombre }}</div></div><a class="btn btn-sm btn-primary" href="{% url 'admin_users' %}?q={{ p.user.email|urlencode }}">Revisar</a></div>{% empty %}<p class="text-secondary mb-0">No hay solicitudes pendientes de verificación.</p>{% endfor %}</div></div>
+ <div class="col-lg-5"><div class="panel h-100"><h2 class="h5 mb-3">Aulas recientes</h2>{% for c in recent_courses %}<div class="border-top py-2"><strong>{{ c.titulo }}</strong><div class="small text-secondary">{{ c.codigo }} · {{ c.nucleo.nombre }} · {{ c.docente.get_full_name|default:c.docente.username }}</div><a class="small" href="{% url 'manage_course_detail' c.pk %}">Administrar aula</a></div>{% empty %}<p class="text-secondary">Aún no hay aulas registradas.</p>{% endfor %}</div></div>
+</div>
+{% endblock %}
