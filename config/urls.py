@@ -9,6 +9,7 @@ urlpatterns=[
  path("panel/",views.dashboard,name="dashboard"),path("cursos/",views.courses,name="courses"),
  path("gestion/aulas/",views.manage_courses,name="manage_courses"),
  path("gestion/aulas/nueva/",views.course_create,name="course_create"),
+ path("gestion/aulas/<int:pk>/editar/",views.course_edit,name="course_edit"),
  path("gestion/aulas/<int:pk>/",views.manage_course_detail,name="manage_course_detail"),
  path("gestion/aulas/<int:pk>/unidades/nueva/",views.section_create,name="section_create"),
  path("gestion/aulas/<int:pk>/unidades/<int:section_id>/recursos/nuevo/",views.resource_create,name="resource_create"),
