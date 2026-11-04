@@ -39,6 +39,7 @@ class Course(models.Model):
  codigo=models.CharField(max_length=30,unique=True)
  descripcion=models.TextField(blank=True)
  programa=models.ForeignKey(Programa,null=True,blank=True,on_delete=models.SET_NULL)
+ unidad_curricular=models.ForeignKey("UnidadCurricular",null=True,blank=True,on_delete=models.SET_NULL,related_name="aulas")
  nucleo=models.ForeignKey(Nucleo,on_delete=models.PROTECT,related_name="cursos")
  docente=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name="cursos_docente")
  periodo=models.CharField(max_length=80,blank=True)
@@ -115,3 +116,40 @@ class AuditLog(models.Model):
  accion=models.CharField(max_length=120)
  detalle=models.CharField(max_length=250,blank=True)
  creado=models.DateTimeField(auto_now_add=True)
+
+class UnidadCurricular(models.Model):
+    VERSIONES = [
+        ("UNICA", "Malla única"),
+        ("ANTERIOR", "Malla anterior"),
+        ("VIGENTE", "Malla vigente"),
+    ]
+    MODALIDADES = [
+        ("presencial", "Presencial"),
+        ("virtual", "Virtual"),
+        ("mixta", "Mixta"),
+    ]
+    programa = models.ForeignKey(Programa, on_delete=models.PROTECT, related_name="unidades_curriculares")
+    codigo = models.CharField(max_length=40)
+    nombre = models.CharField(max_length=180)
+    version_malla = models.CharField(max_length=20, choices=VERSIONES, default="VIGENTE")
+    trayecto = models.CharField(max_length=40, blank=True)
+    semestre = models.CharField(max_length=40, blank=True)
+    unidades_credito = models.PositiveSmallIntegerField(default=0)
+    horas_semanales = models.PositiveSmallIntegerField(null=True, blank=True)
+    duracion_semanas = models.PositiveSmallIntegerField(default=16)
+    modalidad = models.CharField(max_length=12, choices=MODALIDADES, default="mixta")
+    descripcion = models.TextField(blank=True)
+    activa = models.BooleanField(default=True)
+    creada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["programa__nombre", "trayecto", "nombre"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["programa", "codigo", "version_malla"],
+                name="uq_uc_programa_codigo_version",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.programa.nombre} · {self.codigo} · {self.nombre}"
