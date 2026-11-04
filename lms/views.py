@@ -325,9 +325,9 @@ def admin_users(request):
     if query:
         profiles = profiles.filter(
             Q(user__first_name__icontains=query) |
-            forms.models.Q(user__last_name__icontains=query) |
-            forms.models.Q(user__email__icontains=query) |
-            forms.models.Q(cedula__icontains=query)
+            Q(user__last_name__icontains=query) |
+            Q(user__email__icontains=query) |
+            Q(cedula__icontains=query)
         )
     if status in ("pendiente_verificacion", "activo", "suspendido"):
         profiles = profiles.filter(estado=status)
