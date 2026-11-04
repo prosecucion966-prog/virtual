@@ -652,3 +652,22 @@ def admin_cargar_malla_criminologia(request):
         messages.success(request, output.getvalue().strip())
         return redirect("admin_unidades_curriculares")
     return render(request, "lms/admin_cargar_malla_criminologia.html")
+
+
+@login_required
+def admin_cargar_malla_derecho(request):
+    _require_superadmin(request)
+    if request.method == "POST":
+        from django.core.management import call_command
+        from io import StringIO
+        output = StringIO()
+        call_command("cargar_malla_derecho", stdout=output)
+        result = output.getvalue().strip()
+        AuditLog.objects.create(
+            actor=request.user,
+            accion="Carga de malla de Derecho",
+            detalle=result[:250],
+        )
+        messages.success(request, result)
+        return redirect("admin_unidades_curriculares")
+    return render(request, "lms/admin_cargar_malla_derecho.html")
