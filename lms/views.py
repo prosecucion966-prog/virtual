@@ -460,23 +460,40 @@ class UnidadCurricularChoiceField(forms.ModelMultipleChoiceField):
         return f"{obj.programa.nombre} · {version} · {nivel} · {obj.nombre}"
 
 
-class AdminDocenteForm(forms.Form):
+class ProgramaUnidadAssignmentForm(forms.Form):
+    programa = forms.ModelChoiceField(
+        queryset=Programa.objects.filter(activo=True).order_by("categoria", "nombre"),
+        label="Programa académico",
+        empty_label="Selecciona primero un programa",
+        widget=forms.Select(attrs={"class": "form-select", "id": "id_programa"}),
+    )
+    unidades = UnidadCurricularChoiceField(
+        queryset=UnidadCurricular.objects.none(),
+        label="Unidades curriculares",
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        help_text="Después de elegir el programa aparecerán únicamente sus unidades curriculares. Puedes marcar varias.",
+    )
+    periodo = forms.CharField(
+        max_length=80, label="Período académico",
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "2026-II"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        program_id = self.data.get("programa") if self.is_bound else self.initial.get("programa")
+        if program_id:
+            self.fields["unidades"].queryset = UnidadCurricular.objects.filter(
+                programa_id=program_id, activa=True,
+            ).select_related("programa").order_by("semestre", "trayecto", "nombre")
+
+
+class AdminDocenteForm(ProgramaUnidadAssignmentForm):
     nombres = forms.CharField(max_length=150, label="Nombres", widget=forms.TextInput(attrs={"class": "form-control"}))
     apellidos = forms.CharField(max_length=150, label="Apellidos", widget=forms.TextInput(attrs={"class": "form-control"}))
     correo = forms.EmailField(label="Correo institucional", widget=forms.EmailInput(attrs={"class": "form-control"}))
     cedula = forms.CharField(max_length=12, label="Cédula", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "V-12345678"}))
     telefono = forms.CharField(max_length=20, label="Teléfono", widget=forms.TextInput(attrs={"class": "form-control"}))
     nucleo = forms.ModelChoiceField(queryset=Nucleo.objects.filter(activo=True), label="Núcleo", widget=forms.Select(attrs={"class": "form-select"}))
-    unidades = UnidadCurricularChoiceField(
-        queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
-        label="Materias que impartirá",
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
-        help_text="Puedes seleccionar varias materias de distintos programas y versiones de malla.",
-    )
-    periodo = forms.CharField(
-        max_length=80, label="Período académico",
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "2026-II"}),
-    )
     password = forms.CharField(label="Contraseña temporal", widget=forms.PasswordInput(attrs={"class": "form-control"}))
     confirmar_password = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput(attrs={"class": "form-control"}))
 
@@ -488,7 +505,7 @@ class AdminDocenteForm(forms.Form):
 
     def clean_cedula(self):
         cedula = self.cleaned_data["cedula"].strip().upper().replace(" ", "")
-        if not re.fullmatch(r"[VE]-?\d{5,10}", cedula):
+        if not re.fullmatch(r"[VE]-?\\d{5,10}", cedula):
             raise forms.ValidationError("Use V/E seguido de 5 a 10 dígitos.")
         cedula = cedula[0] + "-" + cedula[1:].lstrip("-")
         if Profile.objects.filter(cedula=cedula).exists():
@@ -505,21 +522,12 @@ class AdminDocenteForm(forms.Form):
             except forms.ValidationError as exc:
                 self.add_error("password", exc)
         if not data.get("unidades"):
-            self.add_error("unidades", "Selecciona al menos una unidad curricular para asignar al docente.")
+            self.add_error("unidades", "Selecciona al menos una unidad curricular del programa elegido.")
         return data
 
 
-class AdminAsignacionesDocenteForm(forms.Form):
-    unidades = UnidadCurricularChoiceField(
-        queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
-        label="Unidades curriculares",
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
-        help_text="Puedes seleccionar materias de diferentes programas y versiones de malla.",
-    )
-    periodo = forms.CharField(
-        max_length=80, label="Período académico",
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "2026-II"}),
-    )
+class AdminAsignacionesDocenteForm(ProgramaUnidadAssignmentForm):
+    pass
 
 
 def _ensure_assignment_aula(docente, unidad, nucleo, periodo):
