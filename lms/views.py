@@ -603,3 +603,34 @@ def admin_unidades_curriculares(request):
     if query:
         unidades = unidades.filter(Q(nombre__icontains=query) | Q(codigo__icontains=query) | Q(programa__nombre__icontains=query))
     return render(request, "lms/admin_unidades_curriculares.html", {"unidades": unidades, "query": query})
+
+
+@login_required
+def admin_importar_mallas(request):
+    _require_superadmin(request)
+    summary = None
+    if request.method == "POST":
+        uploaded = request.FILES.get("archivo_mallas")
+        if not uploaded:
+            messages.error(request, "Selecciona el archivo Excel de las mallas.")
+        elif not uploaded.name.lower().endswith(".xlsx"):
+            messages.error(request, "El archivo debe tener formato .xlsx.")
+        elif uploaded.size > 5 * 1024 * 1024:
+            messages.error(request, "El archivo supera el límite de 5 MB.")
+        else:
+            try:
+                from openpyxl import load_workbook
+                from .curriculum_import import import_workbook
+                workbook = load_workbook(uploaded, read_only=True, data_only=True)
+                try:
+                    received = {sheet.title.strip().upper() for sheet in workbook.worksheets}
+                    if not received.intersection({"POLICIAL VIEJA", "POLICIAL NUEVA", "INV PENAL VIEJA", "CRIMINALÍSTICA VIEJA", "IP Y CRIM NUEVA", "SERV PENIT", "BOMBERIL", "PCAD", "SEG NACION", "EMERGENCIA PREH"}):
+                        raise ValueError("El libro no contiene hojas reconocidas de las mallas UNES.")
+                    summary = import_workbook(workbook)
+                finally:
+                    workbook.close()
+                AuditLog.objects.create(actor=request.user, accion="Importación de mallas curriculares", detalle=f"{summary['created']} creadas, {summary['updated']} actualizadas")
+                messages.success(request, f"Importación finalizada: {summary['created']} unidades creadas y {summary['updated']} actualizadas.")
+            except Exception as exc:
+                messages.error(request, f"No se pudo procesar el libro: {exc}")
+    return render(request, "lms/admin_importar_mallas.html", {"summary": summary})

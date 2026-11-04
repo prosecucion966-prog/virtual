@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Importar mallas curriculares{% endblock %}
+{% block content %}
+<div class="mb-4">
+<a href="{% url 'admin_dashboard' %}">Volver al centro de control</a>
+<h1 class="h2 fw-bold mt-3">Cargar mallas curriculares</h1>
+<p class="text-secondary">Carga el libro Excel .xlsx. Se mantienen separadas las versiones anteriores y vigentes. La operación es idempotente.</p>
+</div>
+<div class="panel mb-4">
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<label class="form-label" for="archivo_mallas">Libro Excel (máximo 5 MB)</label>
+<input class="form-control mb-3" id="archivo_mallas" name="archivo_mallas" type="file" accept=".xlsx" required>
+<button class="btn btn-primary" type="submit">Importar mallas</button>
+</form>
+</div>
+<div class="panel mb-4">
+<h2 class="h5">Hojas y programas de destino</h2>
+<ul class="mb-0">
+<li>POLICIAL VIEJA y POLICIAL NUEVA → Servicio de Policía (anterior y vigente).</li>
+<li>INV PENAL VIEJA → Investigación Penal (anterior).</li>
+<li>CRIMINALÍSTICA VIEJA → Criminalística (anterior).</li>
+<li>IP Y CRIM NUEVA → Investigación Penal y Criminalística (vigente).</li>
+<li>SERV PENIT → Servicios Penitenciarios (anterior).</li>
+<li>BOMBERIL → Ciencias de Fuego y Seguridad Contra Incendios (anterior).</li>
+<li>PCAD → Protección Civil y Administración de Desastres (anterior, en revisión).</li>
+<li>SEG NACION → Seguridad de la Nación (anterior).</li>
+<li>EMERGENCIA PREH → Emergencia Prehospitalarias (anterior).</li>
+</ul>
+</div>
+{% if summary %}
+<div class="panel">
+<h2 class="h5">Resultado de la importación</h2>
+<div class="row g-3 mb-3">
+<div class="col-4"><div class="stat"><div class="number">{{ summary.created }}</div><div class="small">Creadas</div></div></div>
+<div class="col-4"><div class="stat"><div class="number">{{ summary.updated }}</div><div class="small">Actualizadas</div></div></div>
+<div class="col-4"><div class="stat"><div class="number">{{ summary.skipped }}</div><div class="small">Omitidas</div></div></div>
+</div>
+{% for sheet, data in summary.by_sheet.items %}
+<div class="border-top py-2 d-flex justify-content-between"><strong>{{ sheet }}</strong><span class="small">{{ data.unidades }} filas · {{ data.creadas }} nuevas · {{ data.actualizadas }} actualizadas</span></div>
+{% endfor %}
+{% if summary.warnings %}<div class="alert alert-warning mt-3"><strong>Observaciones</strong><ul>{% for warning in summary.warnings %}<li>{{ warning }}</li>{% endfor %}</ul></div>{% endif %}
+<a class="btn btn-outline-primary mt-3" href="{% url 'admin_unidades_curriculares' %}">Ver catálogo importado</a>
+</div>
+{% endif %}
+{% endblock %}

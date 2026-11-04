@@ -19,6 +19,7 @@ urlpatterns=[
  path("administracion/docentes/nuevo/",views.admin_docente_create,name="admin_docente_create"),
  path("administracion/unidades-curriculares/",views.admin_unidades_curriculares,name="admin_unidades_curriculares"),
  path("administracion/unidades-curriculares/nueva/",views.admin_unidad_curricular_create,name="admin_unidad_curricular_create"),
+ path("administracion/mallas/importar/",views.admin_importar_mallas,name="admin_importar_mallas"),
  path("administracion/nucleos/nuevo/",views.admin_nucleo_create,name="admin_nucleo_create"),
  path("administracion/programas/nuevo/",views.admin_programa_create,name="admin_programa_create"),
  path("administracion/anuncios/nuevo/",views.admin_announcement_create,name="admin_announcement_create"),
