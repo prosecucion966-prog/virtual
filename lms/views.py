@@ -243,3 +243,135 @@ def activity_create(request, pk):
         messages.success(request, "Actividad creada.")
         return redirect("manage_course_detail", pk=course.pk)
     return render(request, "lms/form.html", {"form": form, "heading": "Crear actividad o evaluación", "back_url": reverse("manage_course_detail", args=[course.pk])})
+
+
+# --- Centro de control del superadministrador ---
+def _require_superadmin(request):
+    profile = getattr(request.user, "profile", None)
+    if not request.user.is_superuser and (not profile or profile.rol != "superadmin"):
+        raise PermissionDenied
+    return profile
+
+class AdminNucleoForm(forms.ModelForm):
+    class Meta:
+        model = Nucleo
+        fields = ("nombre", "activo")
+        widgets = {"nombre": forms.TextInput(attrs={"class": "form-control"}), "activo": forms.CheckboxInput(attrs={"class": "form-check-input"})}
+
+class AdminProgramaForm(forms.ModelForm):
+    class Meta:
+        model = Programa
+        fields = ("categoria", "nombre", "nivel", "activo")
+        widgets = {
+            "categoria": forms.Select(attrs={"class": "form-select"}),
+            "nombre": forms.TextInput(attrs={"class": "form-control"}),
+            "nivel": forms.TextInput(attrs={"class": "form-control"}),
+            "activo": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+class AdminAnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ("titulo", "cuerpo", "nucleo")
+        widgets = {
+            "titulo": forms.TextInput(attrs={"class": "form-control"}),
+            "cuerpo": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
+            "nucleo": forms.Select(attrs={"class": "form-select"}),
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["nucleo"].required = False
+        self.fields["nucleo"].empty_label = "Todos los núcleos"
+
+@login_required
+def admin_dashboard(request):
+    _require_superadmin(request)
+    pending = Profile.objects.filter(estado="pendiente_verificacion").select_related("user", "nucleo").order_by("user__date_joined")[:8]
+    context = {
+        "users_total": User.objects.count(),
+        "users_pending": Profile.objects.filter(estado="pendiente_verificacion").count(),
+        "users_active": Profile.objects.filter(estado="activo").count(),
+        "courses_total": Course.objects.count(),
+        "courses_published": Course.objects.filter(publicado=True).count(),
+        "nuclei_total": Nucleo.objects.count(),
+        "programs_total": Programa.objects.count(),
+        "enrollments_total": Enrollment.objects.filter(activo=True).count(),
+        "activities_total": Activity.objects.count(),
+        "pending_profiles": pending,
+        "recent_courses": Course.objects.select_related("nucleo", "docente").order_by("-creado")[:6],
+        "nuclei": Nucleo.objects.order_by("nombre")[:8],
+        "programs": Programa.objects.order_by("categoria", "nombre")[:8],
+        "can_open_django_admin": request.user.is_staff,
+    }
+    return render(request, "lms/admin_dashboard.html", context)
+
+@login_required
+def admin_users(request):
+    _require_superadmin(request)
+    query = request.GET.get("q", "").strip()
+    status = request.GET.get("estado", "").strip()
+    profiles = Profile.objects.select_related("user", "nucleo").order_by("-user__date_joined")
+    if query:
+        profiles = profiles.filter(
+            forms.models.Q(user__first_name__icontains=query) |
+            forms.models.Q(user__last_name__icontains=query) |
+            forms.models.Q(user__email__icontains=query) |
+            forms.models.Q(cedula__icontains=query)
+        )
+    if status in ("pendiente_verificacion", "activo", "suspendido"):
+        profiles = profiles.filter(estado=status)
+    if request.method == "POST":
+        profile = get_object_or_404(Profile.objects.select_related("user"), pk=request.POST.get("profile_id"))
+        action = request.POST.get("action")
+        if action == "activate":
+            profile.estado = "activo"
+            profile.verificado = profile.verificado or timezone.now()
+            profile.user.is_active = True
+            profile.user.save(update_fields=["is_active"])
+            profile.save(update_fields=["estado", "verificado"])
+            messages.success(request, f"Cuenta activada: {profile.user.email}")
+        elif action == "suspend":
+            if profile.user_id == request.user.id:
+                messages.error(request, "No puedes suspender tu propia cuenta desde este panel.")
+            else:
+                profile.estado = "suspendido"
+                profile.user.is_active = False
+                profile.user.save(update_fields=["is_active"])
+                profile.save(update_fields=["estado"])
+                messages.success(request, f"Cuenta suspendida: {profile.user.email}")
+        else:
+            messages.error(request, "Acción no reconocida.")
+        return redirect(request.get_full_path() if request.GET else "admin_users")
+    return render(request, "lms/admin_users.html", {"profiles": profiles[:250], "query": query, "status": status, "total": profiles.count()})
+
+@login_required
+def admin_nucleo_create(request):
+    _require_superadmin(request)
+    form = AdminNucleoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        obj = form.save()
+        messages.success(request, f"Núcleo creado: {obj.nombre}")
+        return redirect("admin_dashboard")
+    return render(request, "lms/form.html", {"form": form, "heading": "Crear núcleo", "back_url": reverse("admin_dashboard")})
+
+@login_required
+def admin_programa_create(request):
+    _require_superadmin(request)
+    form = AdminProgramaForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        obj = form.save()
+        messages.success(request, f"Programa creado: {obj.nombre}")
+        return redirect("admin_dashboard")
+    return render(request, "lms/form.html", {"form": form, "heading": "Crear programa académico", "back_url": reverse("admin_dashboard")})
+
+@login_required
+def admin_announcement_create(request):
+    _require_superadmin(request)
+    form = AdminAnnouncementForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        announcement = form.save(commit=False)
+        announcement.autor = request.user
+        announcement.save()
+        messages.success(request, "Anuncio publicado correctamente.")
+        return redirect("admin_dashboard")
+    return render(request, "lms/form.html", {"form": form, "heading": "Publicar anuncio institucional", "back_url": reverse("admin_dashboard")})
