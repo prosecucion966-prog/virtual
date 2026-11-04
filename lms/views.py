@@ -205,6 +205,7 @@ def course_create(request):
     form = ManagedCourseForm(request.POST or None, profile=profile)
     if request.method == "POST" and form.is_valid():
         course = form.save()
+        AuditLog.objects.create(actor=request.user, accion="Creación de aula", detalle=f"{course.codigo} · {course.titulo}"[:250])
         messages.success(request, "Aula creada correctamente.")
         return redirect("manage_course_detail", pk=course.pk)
     return render(request, "lms/form.html", {"form": form, "heading": "Crear aula virtual", "back_url": reverse("manage_courses")})
@@ -340,6 +341,7 @@ def admin_users(request):
             profile.user.is_active = True
             profile.user.save(update_fields=["is_active"])
             profile.save(update_fields=["estado", "verificado"])
+            AuditLog.objects.create(actor=request.user, accion="Activación de cuenta", detalle=profile.user.email)
             messages.success(request, f"Cuenta activada: {profile.user.email}")
         elif action == "suspend":
             if profile.user_id == request.user.id:
@@ -349,6 +351,7 @@ def admin_users(request):
                 profile.user.is_active = False
                 profile.user.save(update_fields=["is_active"])
                 profile.save(update_fields=["estado"])
+                AuditLog.objects.create(actor=request.user, accion="Suspensión de cuenta", detalle=profile.user.email)
                 messages.success(request, f"Cuenta suspendida: {profile.user.email}")
         elif action == "change_role":
             new_role = request.POST.get("rol", "")
@@ -362,6 +365,7 @@ def admin_users(request):
                 profile.rol = new_role
                 profile.nucleo = nucleus
                 profile.save(update_fields=["rol", "nucleo"])
+                AuditLog.objects.create(actor=request.user, accion="Cambio de rol y núcleo", detalle=f"{profile.user.email} · {new_role} · {nucleus.nombre}")
                 messages.success(request, f"Rol y núcleo actualizados para {profile.user.email}.")
         else:
             messages.error(request, "Acción no reconocida.")
@@ -377,6 +381,7 @@ def admin_nucleo_create(request):
     form = AdminNucleoForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         obj = form.save()
+        AuditLog.objects.create(actor=request.user, accion="Creación de núcleo", detalle=obj.nombre)
         messages.success(request, f"Núcleo creado: {obj.nombre}")
         return redirect("admin_dashboard")
     return render(request, "lms/form.html", {"form": form, "heading": "Crear núcleo", "back_url": reverse("admin_dashboard")})
@@ -387,6 +392,7 @@ def admin_programa_create(request):
     form = AdminProgramaForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         obj = form.save()
+        AuditLog.objects.create(actor=request.user, accion="Creación de programa", detalle=obj.nombre)
         messages.success(request, f"Programa creado: {obj.nombre}")
         return redirect("admin_dashboard")
     return render(request, "lms/form.html", {"form": form, "heading": "Crear programa académico", "back_url": reverse("admin_dashboard")})
@@ -399,6 +405,7 @@ def admin_announcement_create(request):
         announcement = form.save(commit=False)
         announcement.autor = request.user
         announcement.save()
+        AuditLog.objects.create(actor=request.user, accion="Publicación de anuncio", detalle=announcement.titulo[:250])
         messages.success(request, "Anuncio publicado correctamente.")
         return redirect("admin_dashboard")
     return render(request, "lms/form.html", {"form": form, "heading": "Publicar anuncio institucional", "back_url": reverse("admin_dashboard")})
@@ -413,6 +420,7 @@ def course_edit(request, pk):
     form = ManagedCourseForm(request.POST or None, instance=course, profile=profile)
     if request.method == "POST" and form.is_valid():
         form.save()
+        AuditLog.objects.create(actor=request.user, accion="Actualización de aula", detalle=f"{course.codigo} · {course.titulo}"[:250])
         messages.success(request, "Aula actualizada correctamente.")
         return redirect("manage_course_detail", pk=course.pk)
     return render(request, "lms/form.html", {
