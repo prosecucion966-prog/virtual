@@ -634,3 +634,21 @@ def admin_importar_mallas(request):
             except Exception as exc:
                 messages.error(request, f"No se pudo procesar el libro: {exc}")
     return render(request, "lms/admin_importar_mallas.html", {"summary": summary})
+
+
+@login_required
+def admin_cargar_malla_criminologia(request):
+    _require_superadmin(request)
+    if request.method == "POST":
+        from django.core.management import call_command
+        from io import StringIO
+        output = StringIO()
+        call_command("cargar_malla_criminologia", stdout=output)
+        AuditLog.objects.create(
+            actor=request.user,
+            accion="Carga de malla de Criminología",
+            detalle=output.getvalue().strip()[:250],
+        )
+        messages.success(request, output.getvalue().strip())
+        return redirect("admin_unidades_curriculares")
+    return render(request, "lms/admin_cargar_malla_criminologia.html")
