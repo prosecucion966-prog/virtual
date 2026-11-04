@@ -366,7 +366,10 @@ def admin_users(request):
         else:
             messages.error(request, "Acción no reconocida.")
         return redirect(request.get_full_path() if request.GET else "admin_users")
-    return render(request, "lms/admin_users.html", {"profiles": profiles[:250], "query": query, "status": status, "total": profiles.count()})
+    return render(request, "lms/admin_users.html", {
+        "profiles": profiles[:250], "query": query, "status": status, "total": profiles.count(),
+        "roles": Profile.ROLES, "nuclei": Nucleo.objects.filter(activo=True),
+    })
 
 @login_required
 def admin_nucleo_create(request):
