@@ -1,0 +1,107 @@
+{
+  "programa": "Criminología",
+  "categoria": "PFG",
+  "nivel": "Pregrado",
+  "version": "UNICA",
+  "semestres": [
+    {
+      "semestre": "I",
+      "unidades": [
+        "Habilidades de la Comunicación Oral y Escrita",
+        "Aprender a Aprender",
+        "Introducción a la Investigación Social",
+        "Tecnologías de la Información y Comunicación",
+        "Derecho Penal I",
+        "Criminología I",
+        "Control Social I"
+      ]
+    },
+    {
+      "semestre": "II",
+      "unidades": [
+        "Técnicas de Investigación Social I",
+        "Inglés I",
+        "Seguridad Ciudadana",
+        "Derecho Penal II",
+        "Criminología II",
+        "Psicología Criminológica I",
+        "Ética y Valores"
+      ]
+    },
+    {
+      "semestre": "III",
+      "unidades": [
+        "Técnicas de Investigación Social II",
+        "Inglés II",
+        "Estadística I",
+        "Control Social II",
+        "Psicología Criminológica II",
+        "Derechos Humanos",
+        "Antropología Social"
+      ]
+    },
+    {
+      "semestre": "IV",
+      "unidades": [
+        "Técnicas de Investigación Social III",
+        "Estudio de la Criminalidad I",
+        "Criminología Clínica",
+        "Psiquiatría Forense",
+        "Estadística II",
+        "Delincuencia Organizada",
+        "Metodología de Proyectos de Inv. I"
+      ]
+    },
+    {
+      "semestre": "V",
+      "unidades": [
+        "Proyecto de Investigación Social I",
+        "Estadística III",
+        "Ciencias Forenses Aplicadas",
+        "Criminalística Aplicada",
+        "Victimología",
+        "Estudio de la Criminalidad II",
+        "Manejo de Conflictos",
+        "Metodología de Proyectos de Inv. II"
+      ]
+    },
+    {
+      "semestre": "VI",
+      "unidades": [
+        "Proyecto de Investigación Social II",
+        "Sistema Penitenciario I",
+        "Análisis Estadístico I",
+        "Perfilación Criminológica",
+        "Intervención Psico-Social I",
+        "Criminometría y Georreferenciación del Delito",
+        "Uso de Fuerza",
+        "Metodología de Proyectos de Inv. III"
+      ]
+    },
+    {
+      "semestre": "VII",
+      "unidades": [
+        "Proyecto de Intervención Preventiva I",
+        "Sistema Penitenciario II",
+        "Intervención Psico-Social II",
+        "Análisis Estadístico II",
+        "Asesoría Criminológica",
+        "Diseño y Evaluación de Políticas Públicas",
+        "Tratamiento en Libertad",
+        "Seminario de Trabajo de Grado I"
+      ]
+    },
+    {
+      "semestre": "VIII",
+      "unidades": [
+        "Proyecto de Intervención Preventiva II",
+        "Gerencia y Planificación Estratégica",
+        "Liderazgo y Comunicación Eficiente",
+        "Prevención Situacional",
+        "Criminología Crítica",
+        "Conflicto y Mediación",
+        "Seminario de Trabajo de Grado II"
+      ]
+    }
+  ]
+}
