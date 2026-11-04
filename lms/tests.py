@@ -29,7 +29,7 @@ class AdminDocenteAsignacionesTests(TestCase):
             "nombres": "Docente", "apellidos": "De Prueba",
             "correo": "docente@example.test", "cedula": "V-12345678",
             "telefono": "04121234567", "nucleo": self.nucleo.pk,
-            "unidades": [self.unidad.pk, self.unidad_dos.pk], "periodo": "2026-II",
+            "programa": self.programa.pk, "unidades": [self.unidad.pk, self.unidad_dos.pk], "periodo": "2026-II",
             "password": "XyZ!9876-Strong", "confirmar_password": "XyZ!9876-Strong",
         })
         self.assertEqual(response.status_code, 302)
@@ -54,7 +54,7 @@ class AdminDocenteAsignacionesTests(TestCase):
             estado="activo",
         )
         url = reverse("admin_docente_asignar", args=[docente.pk])
-        payload = {"unidades": [self.unidad.pk], "periodo": "2026-II"}
+        payload = {"programa": self.programa.pk, "unidades": [self.unidad.pk], "periodo": "2026-II"}
         self.assertEqual(self.client.post(url, payload).status_code, 302)
         self.assertEqual(self.client.post(url, payload).status_code, 302)
         self.assertEqual(TeachingAssignment.objects.filter(docente=docente).count(), 1)
