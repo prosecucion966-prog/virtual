@@ -513,7 +513,7 @@ class AdminDocenteForm(ProgramaUnidadAssignmentForm):
 
     def clean_cedula(self):
         cedula = self.cleaned_data["cedula"].strip().upper().replace(" ", "")
-        if not re.fullmatch(r"[VE]-?\\d{5,10}", cedula):
+        if not re.fullmatch(r"[VE]-?\d{5,10}", cedula):
             raise forms.ValidationError("Use V/E seguido de 5 a 10 dígitos.")
         cedula = cedula[0] + "-" + cedula[1:].lstrip("-")
         if Profile.objects.filter(cedula=cedula).exists():
