@@ -13,6 +13,9 @@
 <div class="row g-3 mb-4">
  <div class="col-12"><h2 class="h5 fw-bold">Acciones administrativas</h2></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_users' %}"><span class="admin-action-icon">♙</span><strong>Usuarios y permisos</strong><small>Verificar, activar y suspender cuentas</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_docente_create' %}"><span class="admin-action-icon">♟</span><strong>Crear docente</strong><small>Registrar cuenta, núcleo y contraseña temporal</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_unidad_curricular_create' %}"><span class="admin-action-icon">▥</span><strong>Crear unidad curricular</strong><small>Vincularla a un PNF, PNFA o PFG y asignar docente</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_unidades_curriculares' %}"><span class="admin-action-icon">☷</span><strong>Ver unidades curriculares</strong><small>Consultar catálogo y aulas asociadas</small></a></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'course_create' %}"><span class="admin-action-icon">▣</span><strong>Crear aula virtual</strong><small>Asignar programa, núcleo y docente</small></a></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'manage_courses' %}"><span class="admin-action-icon">▤</span><strong>Gestionar aulas</strong><small>Revisar cursos y contenidos</small></a></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_announcement_create' %}"><span class="admin-action-icon">✉</span><strong>Publicar anuncio</strong><small>Comunicación institucional o por núcleo</small></a></div>
