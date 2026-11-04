@@ -9,6 +9,7 @@ from django.core import signing
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import render,redirect
+from django.http import JsonResponse
 from django.db.models import Q
 from django.db import transaction
 from django.urls import reverse
@@ -593,6 +594,24 @@ class AdminUnidadCurricularForm(forms.ModelForm):
         elif docente and nucleo and docente.profile.nucleo_id != nucleo.pk:
             self.add_error("nucleo", "El núcleo seleccionado debe coincidir con el núcleo asignado al docente.")
         return data
+
+
+@login_required
+def admin_unidades_por_programa(request, programa_id):
+    _require_superadmin(request)
+    unidades = UnidadCurricular.objects.filter(
+        programa_id=programa_id, activa=True,
+    ).order_by("semestre", "trayecto", "nombre")
+    resultados = []
+    for unidad in unidades:
+        version = unidad.get_version_malla_display()
+        nivel = unidad.semestre or unidad.trayecto or "Trayecto no indicado"
+        resultados.append({
+            "id": unidad.pk,
+            "label": f"{nivel} · {unidad.nombre}",
+            "detalle": f"{version} · {unidad.codigo}",
+        })
+    return JsonResponse({"unidades": resultados})
 
 
 @login_required
