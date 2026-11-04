@@ -15,11 +15,11 @@ SHEET_PROGRAMS = {
         ("Investigación Penal", "VIGENTE"),
         ("Criminalística", "VIGENTE"),
     ],
-    "SERV PENIT": [("Servicios Penitenciarios", "ANTERIOR")],
-    "BOMBERIL": [("Ciencias de Fuego y Seguridad Contra Incendios", "ANTERIOR")],
+    "SERV PENIT": [("Servicios Penitenciarios", "UNICA")],
+    "BOMBERIL": [("Ciencias de Fuego y Seguridad Contra Incendios", "UNICA")],
     "PCAD": [("Protección Civil y Administración de Desastres", "ANTERIOR")],
-    "SEG NACION": [("Seguridad de la Nación", "ANTERIOR")],
-    "EMERGENCIA PREH": [("Emergencia Prehospitalarias", "ANTERIOR")],
+    "SEG NACION": [("Seguridad de la Nación", "UNICA")],
+    "EMERGENCIA PREH": [("Emergencia Prehospitalarias", "UNICA")],
 }
 
 
