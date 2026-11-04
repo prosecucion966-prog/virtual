@@ -453,6 +453,13 @@ def admin_announcements(request):
 
 
 # --- Alta administrativa de docentes y unidades curriculares ---
+class UnidadCurricularChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        version = obj.get_version_malla_display()
+        nivel = obj.semestre or obj.trayecto or "Trayecto no indicado"
+        return f"{obj.programa.nombre} · {version} · {nivel} · {obj.nombre}"
+
+
 class AdminDocenteForm(forms.Form):
     nombres = forms.CharField(max_length=150, label="Nombres", widget=forms.TextInput(attrs={"class": "form-control"}))
     apellidos = forms.CharField(max_length=150, label="Apellidos", widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -460,7 +467,7 @@ class AdminDocenteForm(forms.Form):
     cedula = forms.CharField(max_length=12, label="Cédula", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "V-12345678"}))
     telefono = forms.CharField(max_length=20, label="Teléfono", widget=forms.TextInput(attrs={"class": "form-control"}))
     nucleo = forms.ModelChoiceField(queryset=Nucleo.objects.filter(activo=True), label="Núcleo", widget=forms.Select(attrs={"class": "form-select"}))
-    unidades = forms.ModelMultipleChoiceField(
+    unidades = UnidadCurricularChoiceField(
         queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
         label="Materias que impartirá",
         widget=forms.SelectMultiple(attrs={"class": "form-select", "size": "10"}),
@@ -648,6 +655,7 @@ def admin_docente_asignar(request, user_id):
 
 
 @login_required
+@transaction.atomic
 def admin_unidad_curricular_create(request):
     _require_superadmin(request)
     form = AdminUnidadCurricularForm(request.POST or None)
