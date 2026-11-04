@@ -13,7 +13,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
-from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement
+from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement,AuditLog
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 class RegisterForm(forms.Form):
@@ -419,3 +419,23 @@ def course_edit(request, pk):
         "form": form, "heading": f"Editar aula: {course.titulo}",
         "back_url": reverse("manage_course_detail", args=[course.pk]),
     })
+
+
+@login_required
+def admin_audit(request):
+    _require_superadmin(request)
+    logs = AuditLog.objects.select_related("actor").order_by("-creado")[:200]
+    return render(request, "lms/admin_audit.html", {"logs": logs})
+
+@login_required
+def admin_announcements(request):
+    _require_superadmin(request)
+    if request.method == "POST":
+        announcement = get_object_or_404(Announcement, pk=request.POST.get("announcement_id"))
+        if announcement.autor_id != request.user.id and not request.user.is_superuser:
+            raise PermissionDenied
+        announcement.delete()
+        messages.success(request, "Anuncio eliminado.")
+        return redirect("admin_announcements")
+    items = Announcement.objects.select_related("autor", "nucleo").order_by("-creado")
+    return render(request, "lms/admin_announcements.html", {"announcements": items})
