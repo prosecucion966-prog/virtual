@@ -16,6 +16,7 @@ urlpatterns=[
  path("gestion/aulas/<int:pk>/actividades/nueva/",views.activity_create,name="activity_create"),
  path("administracion/",views.admin_dashboard,name="admin_dashboard"),
  path("administracion/usuarios/",views.admin_users,name="admin_users"),
+ path("administracion/programas/<int:programa_id>/unidades/",views.admin_unidades_por_programa,name="admin_unidades_por_programa"),
  path("administracion/docentes/nuevo/",views.admin_docente_create,name="admin_docente_create"),
  path("administracion/docentes/<int:user_id>/asignar/",views.admin_docente_asignar,name="admin_docente_asignar"),
  path("administracion/unidades-curriculares/",views.admin_unidades_curriculares,name="admin_unidades_curriculares"),
