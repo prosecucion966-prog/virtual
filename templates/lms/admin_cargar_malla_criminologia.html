@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Cargar malla de Criminología · UNES{% endblock %}
+{% block content %}
+<div class="mb-4">
+ <a href="{% url 'admin_dashboard' %}">← Centro de control</a>
+ <div class="eyebrow text-primary mt-3">GESTIÓN ACADÉMICA</div>
+ <h1 class="h2 fw-bold">Cargar pensum de Criminología</h1>
+ <p class="text-secondary">Se incorporarán 59 unidades curriculares distribuidas en ocho semestres al programa Criminología (PFG).</p>
+</div>
+<div class="panel">
+ <h2 class="h5">Datos de la carga</h2>
+ <ul>
+  <li>Se conserva el programa Criminología existente.</li>
+  <li>La versión se registra como única, según el material recibido.</li>
+  <li>Se generan códigos internos CRIM-S01-01 a CRIM-S08-07 para identificar cada materia.</li>
+  <li>No se asignan créditos ni horas porque esos datos no fueron suministrados.</li>
+  <li>La operación es idempotente: no duplica unidades al repetirla.</li>
+ </ul>
+ <form method="post">
+  {% csrf_token %}
+  <button class="btn btn-primary" type="submit">Cargar las 59 unidades curriculares</button>
+  <a class="btn btn-outline-secondary ms-2" href="{% url 'admin_dashboard' %}">Cancelar</a>
+ </form>
+</div>
+{% endblock %}
