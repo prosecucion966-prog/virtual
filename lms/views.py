@@ -9,10 +9,11 @@ from django.core import signing
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import render,redirect
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
-from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement
+from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement,AuditLog
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 class RegisterForm(forms.Form):
@@ -204,6 +205,7 @@ def course_create(request):
     form = ManagedCourseForm(request.POST or None, profile=profile)
     if request.method == "POST" and form.is_valid():
         course = form.save()
+        AuditLog.objects.create(actor=request.user, accion="Creación de aula", detalle=f"{course.codigo} · {course.titulo}"[:250])
         messages.success(request, "Aula creada correctamente.")
         return redirect("manage_course_detail", pk=course.pk)
     return render(request, "lms/form.html", {"form": form, "heading": "Crear aula virtual", "back_url": reverse("manage_courses")})
@@ -243,3 +245,205 @@ def activity_create(request, pk):
         messages.success(request, "Actividad creada.")
         return redirect("manage_course_detail", pk=course.pk)
     return render(request, "lms/form.html", {"form": form, "heading": "Crear actividad o evaluación", "back_url": reverse("manage_course_detail", args=[course.pk])})
+
+
+# --- Centro de control del superadministrador ---
+def _require_superadmin(request):
+    profile = getattr(request.user, "profile", None)
+    if not request.user.is_superuser and (not profile or profile.rol != "superadmin"):
+        raise PermissionDenied
+    return profile
+
+class AdminNucleoForm(forms.ModelForm):
+    class Meta:
+        model = Nucleo
+        fields = ("nombre", "activo")
+        widgets = {"nombre": forms.TextInput(attrs={"class": "form-control"}), "activo": forms.CheckboxInput(attrs={"class": "form-check-input"})}
+
+class AdminProgramaForm(forms.ModelForm):
+    class Meta:
+        model = Programa
+        fields = ("categoria", "nombre", "nivel", "activo")
+        widgets = {
+            "categoria": forms.Select(attrs={"class": "form-select"}),
+            "nombre": forms.TextInput(attrs={"class": "form-control"}),
+            "nivel": forms.TextInput(attrs={"class": "form-control"}),
+            "activo": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+class AdminAnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ("titulo", "cuerpo", "nucleo")
+        widgets = {
+            "titulo": forms.TextInput(attrs={"class": "form-control"}),
+            "cuerpo": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
+            "nucleo": forms.Select(attrs={"class": "form-select"}),
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["nucleo"].required = False
+        self.fields["nucleo"].empty_label = "Todos los núcleos"
+
+@login_required
+def admin_dashboard(request):
+    _require_superadmin(request)
+    pending = Profile.objects.filter(estado="pendiente_verificacion").select_related("user", "nucleo").order_by("user__date_joined")[:8]
+    context = {
+        "users_total": User.objects.count(),
+        "users_pending": Profile.objects.filter(estado="pendiente_verificacion").count(),
+        "users_active": Profile.objects.filter(estado="activo").count(),
+        "courses_total": Course.objects.count(),
+        "courses_published": Course.objects.filter(publicado=True).count(),
+        "nuclei_total": Nucleo.objects.count(),
+        "programs_total": Programa.objects.count(),
+        "enrollments_total": Enrollment.objects.filter(activo=True).count(),
+        "activities_total": Activity.objects.count(),
+        "pending_profiles": pending,
+        "recent_courses": Course.objects.select_related("nucleo", "docente").order_by("-creado")[:6],
+        "nuclei": Nucleo.objects.order_by("nombre")[:8],
+        "programs": Programa.objects.order_by("categoria", "nombre")[:8],
+        "can_open_django_admin": request.user.is_staff,
+        "stats": [
+            ("Usuarios registrados", User.objects.count()),
+            ("Cuentas pendientes", Profile.objects.filter(estado="pendiente_verificacion").count()),
+            ("Cuentas activas", Profile.objects.filter(estado="activo").count()),
+            ("Aulas virtuales", Course.objects.count()),
+            ("Aulas publicadas", Course.objects.filter(publicado=True).count()),
+            ("Núcleos", Nucleo.objects.count()),
+            ("Programas", Programa.objects.count()),
+            ("Matrículas activas", Enrollment.objects.filter(activo=True).count()),
+        ],
+    }
+    return render(request, "lms/admin_dashboard.html", context)
+
+@login_required
+def admin_users(request):
+    _require_superadmin(request)
+    query = request.GET.get("q", "").strip()
+    status = request.GET.get("estado", "").strip()
+    profiles = Profile.objects.select_related("user", "nucleo").order_by("-user__date_joined")
+    if query:
+        profiles = profiles.filter(
+            Q(user__first_name__icontains=query) |
+            Q(user__last_name__icontains=query) |
+            Q(user__email__icontains=query) |
+            Q(cedula__icontains=query)
+        )
+    if status in ("pendiente_verificacion", "activo", "suspendido"):
+        profiles = profiles.filter(estado=status)
+    if request.method == "POST":
+        profile = get_object_or_404(Profile.objects.select_related("user"), pk=request.POST.get("profile_id"))
+        action = request.POST.get("action")
+        if action == "activate":
+            profile.estado = "activo"
+            profile.verificado = profile.verificado or timezone.now()
+            profile.user.is_active = True
+            profile.user.save(update_fields=["is_active"])
+            profile.save(update_fields=["estado", "verificado"])
+            AuditLog.objects.create(actor=request.user, accion="Activación de cuenta", detalle=profile.user.email)
+            messages.success(request, f"Cuenta activada: {profile.user.email}")
+        elif action == "suspend":
+            if profile.user_id == request.user.id:
+                messages.error(request, "No puedes suspender tu propia cuenta desde este panel.")
+            else:
+                profile.estado = "suspendido"
+                profile.user.is_active = False
+                profile.user.save(update_fields=["is_active"])
+                profile.save(update_fields=["estado"])
+                AuditLog.objects.create(actor=request.user, accion="Suspensión de cuenta", detalle=profile.user.email)
+                messages.success(request, f"Cuenta suspendida: {profile.user.email}")
+        elif action == "change_role":
+            new_role = request.POST.get("rol", "")
+            new_nucleus = request.POST.get("nucleo", "")
+            if new_role not in dict(Profile.ROLES):
+                messages.error(request, "Rol no válido.")
+            elif new_role == "superadmin" and not request.user.is_superuser:
+                messages.error(request, "Solo una cuenta superusuario de Django puede otorgar el rol superadministrador.")
+            else:
+                nucleus = get_object_or_404(Nucleo, pk=new_nucleus)
+                profile.rol = new_role
+                profile.nucleo = nucleus
+                profile.save(update_fields=["rol", "nucleo"])
+                AuditLog.objects.create(actor=request.user, accion="Cambio de rol y núcleo", detalle=f"{profile.user.email} · {new_role} · {nucleus.nombre}")
+                messages.success(request, f"Rol y núcleo actualizados para {profile.user.email}.")
+        else:
+            messages.error(request, "Acción no reconocida.")
+        return redirect(request.get_full_path() if request.GET else "admin_users")
+    return render(request, "lms/admin_users.html", {
+        "profiles": profiles[:250], "query": query, "status": status, "total": profiles.count(),
+        "roles": Profile.ROLES, "nuclei": Nucleo.objects.filter(activo=True),
+    })
+
+@login_required
+def admin_nucleo_create(request):
+    _require_superadmin(request)
+    form = AdminNucleoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        obj = form.save()
+        AuditLog.objects.create(actor=request.user, accion="Creación de núcleo", detalle=obj.nombre)
+        messages.success(request, f"Núcleo creado: {obj.nombre}")
+        return redirect("admin_dashboard")
+    return render(request, "lms/form.html", {"form": form, "heading": "Crear núcleo", "back_url": reverse("admin_dashboard")})
+
+@login_required
+def admin_programa_create(request):
+    _require_superadmin(request)
+    form = AdminProgramaForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        obj = form.save()
+        AuditLog.objects.create(actor=request.user, accion="Creación de programa", detalle=obj.nombre)
+        messages.success(request, f"Programa creado: {obj.nombre}")
+        return redirect("admin_dashboard")
+    return render(request, "lms/form.html", {"form": form, "heading": "Crear programa académico", "back_url": reverse("admin_dashboard")})
+
+@login_required
+def admin_announcement_create(request):
+    _require_superadmin(request)
+    form = AdminAnnouncementForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        announcement = form.save(commit=False)
+        announcement.autor = request.user
+        announcement.save()
+        AuditLog.objects.create(actor=request.user, accion="Publicación de anuncio", detalle=announcement.titulo[:250])
+        messages.success(request, "Anuncio publicado correctamente.")
+        return redirect("admin_dashboard")
+    return render(request, "lms/form.html", {"form": form, "heading": "Publicar anuncio institucional", "back_url": reverse("admin_dashboard")})
+
+
+@login_required
+def course_edit(request, pk):
+    profile = _academic_profile(request)
+    if not _can_manage_all(profile, request.user):
+        raise PermissionDenied
+    course = _get_managed_course(request, pk)
+    form = ManagedCourseForm(request.POST or None, instance=course, profile=profile)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        AuditLog.objects.create(actor=request.user, accion="Actualización de aula", detalle=f"{course.codigo} · {course.titulo}"[:250])
+        messages.success(request, "Aula actualizada correctamente.")
+        return redirect("manage_course_detail", pk=course.pk)
+    return render(request, "lms/form.html", {
+        "form": form, "heading": f"Editar aula: {course.titulo}",
+        "back_url": reverse("manage_course_detail", args=[course.pk]),
+    })
+
+
+@login_required
+def admin_audit(request):
+    _require_superadmin(request)
+    logs = AuditLog.objects.select_related("actor").order_by("-creado")[:200]
+    return render(request, "lms/admin_audit.html", {"logs": logs})
+
+@login_required
+def admin_announcements(request):
+    _require_superadmin(request)
+    if request.method == "POST":
+        announcement = get_object_or_404(Announcement, pk=request.POST.get("announcement_id"))
+        if announcement.autor_id != request.user.id and not request.user.is_superuser:
+            raise PermissionDenied
+        announcement.delete()
+        messages.success(request, "Anuncio eliminado.")
+        return redirect("admin_announcements")
+    items = Announcement.objects.select_related("autor", "nucleo").order_by("-creado")
+    return render(request, "lms/admin_announcements.html", {"announcements": items})
