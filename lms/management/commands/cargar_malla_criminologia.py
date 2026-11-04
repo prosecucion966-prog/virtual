@@ -1,0 +1,76 @@
+import json
+from pathlib import Path
+
+from django.core.management.base import BaseCommand
+from django.db import transaction
+
+from lms.models import Programa, UnidadCurricular
+
+
+class Command(BaseCommand):
+    help = "Carga de forma idempotente el pensum de Criminología (8 semestres)."
+
+    @transaction.atomic
+    def handle(self, *args, **options):
+        data_path = Path(__file__).resolve().parents[2] / "data" / "malla_criminologia.json"
+        with data_path.open(encoding="utf-8") as source:
+            data = json.load(source)
+
+        programa, created_program = Programa.objects.get_or_create(
+            nombre=data["programa"],
+            defaults={
+                "categoria": data["categoria"],
+                "nivel": data["nivel"],
+                "activo": True,
+            },
+        )
+        if programa.categoria != data["categoria"]:
+            raise ValueError(
+                f"El programa existe con categoría {programa.categoria}; "
+                f"no se modificó para evitar alterar su clasificación."
+            )
+
+        created = updated = 0
+        for semester in data["semestres"]:
+            roman = semester["semestre"]
+            for index, name in enumerate(semester["unidades"], start=1):
+                code = f"CRIM-S{['I','II','III','IV','V','VI','VII','VIII'].index(roman)+1:02d}-{index:02d}"
+                defaults = {
+                    "nombre": name,
+                    "trayecto": f"Semestre {roman}",
+                    "semestre": roman,
+                    "unidades_credito": 0,
+                    "horas_semanales": None,
+                    "horas_totales": None,
+                    "duracion_semanas": None,
+                    "version_malla": data["version"],
+                    "modalidad": "mixta",
+                    "descripcion": "",
+                    "datos_malla": {
+                        "semestre": roman,
+                        "orden": index,
+                        "creditos_no_suministrados": True,
+                        "horas_no_suministradas": True,
+                        "codigo_generado": True,
+                        "fuente": "Pensum de Criminología proporcionado por la institución",
+                    },
+                    "fuente_malla": "Pensum Académico: Criminología",
+                    "activa": True,
+                }
+                _, was_created = UnidadCurricular.objects.update_or_create(
+                    programa=programa,
+                    codigo=code,
+                    version_malla=data["version"],
+                    defaults=defaults,
+                )
+                if was_created:
+                    created += 1
+                else:
+                    updated += 1
+
+        total = sum(len(item["unidades"]) for item in data["semestres"])
+        self.stdout.write(self.style.SUCCESS(
+            f"Criminología: {total} unidades curriculares. "
+            f"{created} creadas, {updated} actualizadas. "
+            f"Programa {'creado' if created_program else 'ya existente'}."
+        ))
