@@ -1,1 +1,22 @@
-{% extends "base.html" %}{% block title %}{{ heading }} · UNES{% endblock %}{% block content %}<p><a href="{{ back_url }}">← Volver</a></p><div class="panel mx-auto" style="max-width:760px"><h1 class="h3 fw-bold mb-2">{{ heading }}</h1>{% if help_text %}<p class="text-secondary mb-4">{{ help_text }}</p>{% else %}<div class="mb-4"></div>{% endif %}<form method="post" enctype="multipart/form-data">{% csrf_token %}{% for field in form %}<div class="mb-3">{% if field.field.widget.input_type == "checkbox" %}<div class="form-check">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>{% else %}<label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}{% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}<button class="btn btn-primary">Guardar</button> <a class="btn btn-outline-secondary" href="{{ back_url }}">Cancelar</a></form></div>{% endblock %}
+{% extends "base.html" %}{% block title %}{{ heading }} · UNES<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const search = document.getElementById("filtro-unidades");
+  if (!search) return;
+  const options = Array.from(document.querySelectorAll(".curriculum-option"));
+  search.addEventListener("input", function () {
+    const term = search.value.trim().toLocaleLowerCase("es");
+    options.forEach(function (option) {
+      option.hidden = !option.textContent.toLocaleLowerCase("es").includes(term);
+    });
+  });
+});
+</script>
+<style>
+.curriculum-picker-list { max-height: 420px; overflow-y: auto; background: var(--bs-body-bg, #fff); }
+.curriculum-option { cursor: pointer; line-height: 1.45; overflow-wrap: anywhere; }
+.curriculum-option:last-child { border-bottom: 0 !important; }
+.curriculum-option:hover { background: rgba(13,110,253,.06); }
+.curriculum-option input { flex: 0 0 auto; margin-top: .15rem; }
+.curriculum-option-label { min-width: 0; white-space: normal; }
+</style>
+{% endblock %}{% block content %}<p><a href="{{ back_url }}">← Volver</a></p><div class="panel mx-auto" style="max-width:760px"><h1 class="h3 fw-bold mb-2">{{ heading }}</h1>{% if help_text %}<p class="text-secondary mb-4">{{ help_text }}</p>{% else %}<div class="mb-4"></div>{% endif %}<form method="post" enctype="multipart/form-data">{% csrf_token %}{% for field in form %}<div class="mb-3 {% if field.name == 'unidades' %}curriculum-picker{% endif %}">{% if field.name == "unidades" %}<div class="d-flex justify-content-between align-items-center gap-2 mb-2"><label class="form-label fw-semibold mb-0" for="filtro-unidades">{{ field.label }}</label><span class="badge text-bg-primary">{{ field|length }} disponibles</span></div><input id="filtro-unidades" class="form-control mb-2" type="search" placeholder="Buscar materia, programa o semestre..." autocomplete="off"><div class="curriculum-picker-list border rounded p-3" role="group" aria-label="Unidades curriculares disponibles">{% for checkbox in field %}<label class="curriculum-option d-flex align-items-start gap-2 py-2 border-bottom"><span class="pt-1">{{ checkbox.tag }}</span><span class="curriculum-option-label">{{ checkbox.choice_label }}</span></label>{% endfor %}</div>{% else %}{% if field.field.widget.input_type == "checkbox" %}<div class="form-check">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>{% else %}<label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}{% endif %}{% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}<button class="btn btn-primary">Guardar</button> <a class="btn btn-outline-secondary" href="{{ back_url }}">Cancelar</a></form></div>{% endblock %}

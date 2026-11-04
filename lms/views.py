@@ -470,7 +470,7 @@ class AdminDocenteForm(forms.Form):
     unidades = UnidadCurricularChoiceField(
         queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
         label="Materias que impartirá",
-        widget=forms.SelectMultiple(attrs={"class": "form-select", "size": "10"}),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
         help_text="Puedes seleccionar varias materias de distintos programas y versiones de malla.",
     )
     periodo = forms.CharField(
@@ -513,7 +513,7 @@ class AdminAsignacionesDocenteForm(forms.Form):
     unidades = UnidadCurricularChoiceField(
         queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
         label="Unidades curriculares",
-        widget=forms.SelectMultiple(attrs={"class": "form-select", "size": "12"}),
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
         help_text="Puedes seleccionar materias de diferentes programas y versiones de malla.",
     )
     periodo = forms.CharField(

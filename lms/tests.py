@@ -19,13 +19,17 @@ class AdminDocenteAsignacionesTests(TestCase):
             programa=self.programa, codigo="DER-001", nombre="Derecho Constitucional",
             version_malla="VIGENTE", semestre="I", unidades_credito=3,
         )
+        self.unidad_dos = UnidadCurricular.objects.create(
+            programa=self.programa, codigo="DER-002", nombre="Derecho Civil I",
+            version_malla="VIGENTE", semestre="I", unidades_credito=4,
+        )
 
     def test_crear_docente_asigna_materia_y_crea_aula(self):
         response = self.client.post(reverse("admin_docente_create"), {
             "nombres": "Docente", "apellidos": "De Prueba",
             "correo": "docente@example.test", "cedula": "V-12345678",
             "telefono": "04121234567", "nucleo": self.nucleo.pk,
-            "unidades": [self.unidad.pk], "periodo": "2026-II",
+            "unidades": [self.unidad.pk, self.unidad_dos.pk], "periodo": "2026-II",
             "password": "XyZ!9876-Strong", "confirmar_password": "XyZ!9876-Strong",
         })
         self.assertEqual(response.status_code, 302)
@@ -33,9 +37,9 @@ class AdminDocenteAsignacionesTests(TestCase):
         self.assertEqual(docente.profile.rol, "teacher")
         self.assertTrue(docente.is_active)
         self.assertFalse(docente.is_staff)
-        self.assertEqual(TeachingAssignment.objects.filter(docente=docente).count(), 1)
-        aula = Course.objects.get(docente=docente)
-        self.assertEqual(aula.unidad_curricular_id, self.unidad.pk)
+        self.assertEqual(TeachingAssignment.objects.filter(docente=docente).count(), 2)
+        self.assertEqual(Course.objects.filter(docente=docente).count(), 2)
+        aula = Course.objects.get(docente=docente, unidad_curricular=self.unidad)
         self.assertEqual(aula.nucleo_id, self.nucleo.pk)
         self.assertEqual(aula.periodo, "2026-II")
 
