@@ -17,6 +17,7 @@ urlpatterns=[
  path("administracion/",views.admin_dashboard,name="admin_dashboard"),
  path("administracion/usuarios/",views.admin_users,name="admin_users"),
  path("administracion/docentes/nuevo/",views.admin_docente_create,name="admin_docente_create"),
+ path("administracion/docentes/<int:user_id>/asignar/",views.admin_docente_asignar,name="admin_docente_asignar"),
  path("administracion/unidades-curriculares/",views.admin_unidades_curriculares,name="admin_unidades_curriculares"),
  path("administracion/unidades-curriculares/nueva/",views.admin_unidad_curricular_create,name="admin_unidad_curricular_create"),
  path("administracion/mallas/importar/",views.admin_importar_mallas,name="admin_importar_mallas"),
