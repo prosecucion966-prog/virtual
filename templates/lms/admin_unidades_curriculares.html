@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Unidades curriculares · UNES{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+ <div><a href="{% url 'admin_dashboard' %}">← Centro de control</a><div class="eyebrow text-primary mt-3">GESTIÓN ACADÉMICA</div><h1 class="h2 fw-bold mb-1">Unidades curriculares</h1><p class="text-secondary mb-0">Catálogo vinculado a programas y versiones de malla.</p></div>
+ <a class="btn btn-primary" href="{% url 'admin_unidad_curricular_create' %}">+ Crear unidad curricular</a>
+</div>
+<div class="panel mb-3"><form method="get" class="d-flex gap-2"><input class="form-control" name="q" value="{{ query }}" placeholder="Buscar por nombre, código o programa"><button class="btn btn-outline-primary">Buscar</button></form></div>
+<div class="row g-3">
+{% for u in unidades %}
+ <div class="col-lg-6"><div class="panel h-100">
+  <div class="d-flex justify-content-between gap-2"><div><span class="small text-primary fw-semibold">{{ u.programa.get_categoria_display }} · {{ u.version_malla }}</span><h2 class="h5 mt-1 mb-1">{{ u.nombre }}</h2><div class="small text-secondary">{{ u.codigo }} · {{ u.programa.nombre }}</div></div>{% if u.activa %}<span class="badge text-bg-success">Activa</span>{% else %}<span class="badge text-bg-secondary">Inactiva</span>{% endif %}</div>
+  <div class="small mt-3">Trayecto: {{ u.trayecto|default:"No indicado" }} · Semestre: {{ u.semestre|default:"No indicado" }} · UC: {{ u.unidades_credito }} · Duración: {{ u.duracion_semanas }} semanas</div>
+  <div class="border-top mt-3 pt-3"><strong class="small">Aulas asociadas</strong>{% for aula in u.aulas.all %}<div class="small mt-1">{{ aula.codigo }} · {{ aula.nucleo.nombre }} · {{ aula.docente.get_full_name|default:aula.docente.email }} · {% if aula.publicado %}Publicada{% else %}Borrador{% endif %}</div>{% empty %}<div class="small text-secondary mt-1">Todavía no tiene aulas asignadas.</div>{% endfor %}</div>
+ </div></div>
+{% empty %}<div class="col-12"><div class="panel text-secondary">No hay unidades curriculares registradas.</div></div>{% endfor %}
+</div>
+{% endblock %}
