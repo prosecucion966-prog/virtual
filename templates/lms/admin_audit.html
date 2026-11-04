@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block title %}Auditoría · UNES{% endblock %}{% block content %}
+<p><a href="{% url 'admin_dashboard' %}">← Centro de control</a></p><div class="eyebrow text-primary">SEGURIDAD Y TRAZABILIDAD</div><h1 class="h2 fw-bold">Registro de auditoría</h1><p class="text-secondary">Últimos 200 eventos registrados por los módulos que escriben en AuditLog.</p>
+<div class="panel"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Fecha</th><th>Actor</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>{% for log in logs %}<tr><td class="small">{{ log.creado|date:"d/m/Y H:i" }}</td><td>{{ log.actor.get_full_name|default:log.actor.username|default:"Sistema" }}</td><td>{{ log.accion }}</td><td>{{ log.detalle }}</td></tr>{% empty %}<tr><td colspan="4" class="text-secondary">No hay eventos registrados todavía.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}
