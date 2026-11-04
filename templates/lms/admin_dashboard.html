@@ -14,6 +14,7 @@
  <div class="col-12"><h2 class="h5 fw-bold">Acciones administrativas</h2></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_users' %}"><span class="admin-action-icon">♙</span><strong>Usuarios y permisos</strong><small>Verificar, activar y suspender cuentas</small></a></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_docente_create' %}"><span class="admin-action-icon">♟</span><strong>Crear docente</strong><small>Registrar cuenta, núcleo y contraseña temporal</small></a></div>
+ <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_users' %}?q="><span class="admin-action-icon">⇄</span><strong>Asignar materias a docentes</strong><small>Seleccionar programa, malla, unidad curricular y generar aulas</small></a></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_unidad_curricular_create' %}"><span class="admin-action-icon">▥</span><strong>Crear unidad curricular</strong><small>Vincularla a un PNF, PNFA o PFG y asignar docente</small></a></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_unidades_curriculares' %}"><span class="admin-action-icon">☷</span><strong>Ver unidades curriculares</strong><small>Consultar catálogo y aulas asociadas</small></a></div>
  <div class="col-6 col-lg-3"><a class="admin-action" href="{% url 'admin_importar_mallas' %}"><span class="admin-action-icon">XLS</span><strong>Cargar mallas curriculares</strong><small>Importar el libro Excel y vincular las unidades a sus programas</small></a></div>
