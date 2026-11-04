@@ -402,3 +402,20 @@ def admin_announcement_create(request):
         messages.success(request, "Anuncio publicado correctamente.")
         return redirect("admin_dashboard")
     return render(request, "lms/form.html", {"form": form, "heading": "Publicar anuncio institucional", "back_url": reverse("admin_dashboard")})
+
+
+@login_required
+def course_edit(request, pk):
+    profile = _academic_profile(request)
+    if not _can_manage_all(profile, request.user):
+        raise PermissionDenied
+    course = _get_managed_course(request, pk)
+    form = ManagedCourseForm(request.POST or None, instance=course, profile=profile)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Aula actualizada correctamente.")
+        return redirect("manage_course_detail", pk=course.pk)
+    return render(request, "lms/form.html", {
+        "form": form, "heading": f"Editar aula: {course.titulo}",
+        "back_url": reverse("manage_course_detail", args=[course.pk]),
+    })
