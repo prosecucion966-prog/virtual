@@ -19,6 +19,8 @@ urlpatterns=[
  path("administracion/nucleos/nuevo/",views.admin_nucleo_create,name="admin_nucleo_create"),
  path("administracion/programas/nuevo/",views.admin_programa_create,name="admin_programa_create"),
  path("administracion/anuncios/nuevo/",views.admin_announcement_create,name="admin_announcement_create"),
+ path("administracion/anuncios/",views.admin_announcements,name="admin_announcements"),
+ path("administracion/auditoria/",views.admin_audit,name="admin_audit"),
  path("recuperar/",auth_views.PasswordResetView.as_view(template_name="registration/reset.html"),name="password_reset"),
  path("recuperar/enviado/",auth_views.PasswordResetDoneView.as_view(template_name="registration/reset_done.html"),name="password_reset_done"),
  path("restablecer/<uidb64>/<token>/",auth_views.PasswordResetConfirmView.as_view(template_name="registration/reset_confirm.html"),name="password_reset_confirm"),
