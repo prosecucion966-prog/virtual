@@ -303,6 +303,16 @@ def admin_dashboard(request):
         "nuclei": Nucleo.objects.order_by("nombre")[:8],
         "programs": Programa.objects.order_by("categoria", "nombre")[:8],
         "can_open_django_admin": request.user.is_staff,
+        "stats": [
+            ("Usuarios registrados", User.objects.count()),
+            ("Cuentas pendientes", Profile.objects.filter(estado="pendiente_verificacion").count()),
+            ("Cuentas activas", Profile.objects.filter(estado="activo").count()),
+            ("Aulas virtuales", Course.objects.count()),
+            ("Aulas publicadas", Course.objects.filter(publicado=True).count()),
+            ("Núcleos", Nucleo.objects.count()),
+            ("Programas", Programa.objects.count()),
+            ("Matrículas activas", Enrollment.objects.filter(activo=True).count()),
+        ],
     }
     return render(request, "lms/admin_dashboard.html", context)
 
@@ -340,6 +350,19 @@ def admin_users(request):
                 profile.user.save(update_fields=["is_active"])
                 profile.save(update_fields=["estado"])
                 messages.success(request, f"Cuenta suspendida: {profile.user.email}")
+        elif action == "change_role":
+            new_role = request.POST.get("rol", "")
+            new_nucleus = request.POST.get("nucleo", "")
+            if new_role not in dict(Profile.ROLES):
+                messages.error(request, "Rol no válido.")
+            elif new_role == "superadmin" and not request.user.is_superuser:
+                messages.error(request, "Solo una cuenta superusuario de Django puede otorgar el rol superadministrador.")
+            else:
+                nucleus = get_object_or_404(Nucleo, pk=new_nucleus)
+                profile.rol = new_role
+                profile.nucleo = nucleus
+                profile.save(update_fields=["rol", "nucleo"])
+                messages.success(request, f"Rol y núcleo actualizados para {profile.user.email}.")
         else:
             messages.error(request, "Acción no reconocida.")
         return redirect(request.get_full_path() if request.GET else "admin_users")
