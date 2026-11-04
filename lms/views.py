@@ -510,7 +510,7 @@ class AdminDocenteForm(forms.Form):
 
 
 class AdminAsignacionesDocenteForm(forms.Form):
-    unidades = forms.ModelMultipleChoiceField(
+    unidades = UnidadCurricularChoiceField(
         queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
         label="Unidades curriculares",
         widget=forms.SelectMultiple(attrs={"class": "form-select", "size": "12"}),
@@ -526,10 +526,13 @@ def _ensure_assignment_aula(docente, unidad, nucleo, periodo):
     assignment, _ = TeachingAssignment.objects.get_or_create(
         docente=docente, unidad_curricular=unidad, nucleo=nucleo, periodo=periodo,
     )
+    if not assignment.activa:
+        assignment.activa = True
+        assignment.save(update_fields=["activa"])
     if assignment.aula_id:
         return assignment, False
     aula = Course.objects.create(
-        titulo=unidad.nombre, codigo=f"ASG{assignment.pk}",
+        titulo=unidad.nombre, codigo=f"ASG-{assignment.pk}",
         descripcion=unidad.descripcion, programa=unidad.programa,
         unidad_curricular=unidad, nucleo=nucleo, docente=docente,
         periodo=periodo, publicado=False,
