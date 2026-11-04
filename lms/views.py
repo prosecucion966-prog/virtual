@@ -9,6 +9,7 @@ from django.core import signing
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import render,redirect
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
@@ -313,7 +314,7 @@ def admin_users(request):
     profiles = Profile.objects.select_related("user", "nucleo").order_by("-user__date_joined")
     if query:
         profiles = profiles.filter(
-            forms.models.Q(user__first_name__icontains=query) |
+            Q(user__first_name__icontains=query) |
             forms.models.Q(user__last_name__icontains=query) |
             forms.models.Q(user__email__icontains=query) |
             forms.models.Q(cedula__icontains=query)
