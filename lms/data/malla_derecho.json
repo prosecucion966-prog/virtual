@@ -1,0 +1,97 @@
+{
+  "programa": "Derecho",
+  "categoria": "PFG",
+  "nivel": "Pregrado",
+  "version": "UNICA",
+  "semestres": [
+    {
+      "semestre": "I",
+      "unidades": [
+        "Lógica Jurídica",
+        "Sociología Jurídica",
+        "Introducción al Derecho I",
+        "Derecho Romano I",
+        "Derecho Civil I",
+        "Derecho Constitucional I",
+        "Historia del Derecho"
+      ]
+    },
+    {
+      "semestre": "II",
+      "unidades": [
+        "Introducción al Derecho II",
+        "Derecho Civil II",
+        "Derecho Romano II",
+        "Derecho Constitucional II",
+        "Derecho Registral",
+        "Economía Política"
+      ]
+    },
+    {
+      "semestre": "III",
+      "unidades": [
+        "Derecho de Familia",
+        "Derecho Penal I",
+        "Derecho Civil III",
+        "Derecho Administrativo I",
+        "Derecho Internacional Público"
+      ]
+    },
+    {
+      "semestre": "IV",
+      "unidades": [
+        "Derecho Sucesoral",
+        "Derecho Penal II",
+        "Derecho Civil IV",
+        "Derecho Internacional Privado",
+        "Criminología",
+        "Derecho Administrativo II"
+      ]
+    },
+    {
+      "semestre": "V",
+      "unidades": [
+        "Liderazgo Productivo I",
+        "Lenguaje y Argumentación Jurídica",
+        "Legislación Penal Especial",
+        "Medicina Legal",
+        "Obligaciones I",
+        "Derecho Administrativo III"
+      ]
+    },
+    {
+      "semestre": "VI",
+      "unidades": [
+        "Liderazgo Productivo II",
+        "Redacción Jurídica Documental",
+        "Derecho de Tránsito",
+        "Obligaciones II",
+        "Derecho Contencioso Administrativo",
+        "Derecho Laboral",
+        "Criminalística"
+      ]
+    },
+    {
+      "semestre": "VII",
+      "unidades": [
+        "Liderazgo Productivo III",
+        "Derecho Mercantil I",
+        "Derecho Contencioso Funcional",
+        "Derecho Tributario",
+        "Deontología",
+        "Derecho Procesal Laboral"
+      ]
+    },
+    {
+      "semestre": "VIII",
+      "unidades": [
+        "Liderazgo Productivo IV",
+        "Derechos Humanos y Garantías Procesales",
+        "Derecho Procesal Civil",
+        "Derecho Procesal Penal",
+        "Derecho Mercantil II",
+        "Derecho Probatorio"
+      ]
+    }
+  ]
+}
