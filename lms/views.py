@@ -521,6 +521,16 @@ class AdminUnidadCurricularForm(forms.ModelForm):
         self.fields["programa"].queryset = Programa.objects.filter(activo=True).order_by("categoria", "nombre")
         self.fields["docente"].queryset = User.objects.filter(profile__rol="teacher", profile__estado="activo", is_active=True).order_by("last_name", "first_name")
 
+    def clean(self):
+        data = super().clean()
+        docente = data.get("docente")
+        nucleo = data.get("nucleo")
+        if docente and not nucleo:
+            self.add_error("nucleo", "Selecciona el núcleo para crear el aula del docente.")
+        elif docente and nucleo and docente.profile.nucleo_id != nucleo.pk:
+            self.add_error("nucleo", "El núcleo seleccionado debe coincidir con el núcleo asignado al docente.")
+        return data
+
 
 @login_required
 def admin_docente_create(request):
@@ -558,14 +568,9 @@ def admin_unidad_curricular_create(request):
         nucleo = form.cleaned_data["nucleo"]
         aula = None
         if docente and nucleo:
-            if docente.profile.nucleo_id != nucleo.pk:
-                form.add_error("nucleo", "El núcleo seleccionado debe coincidir con el núcleo asignado al docente.")
-            else:
-                codigo_aula = f"{unidad.codigo}-{unidad.version_malla}-{nucleo.pk}"
-                if Course.objects.filter(codigo=codigo_aula).exists():
-                    codigo_aula = f"{codigo_aula}-{unidad.pk}"
-                aula = Course.objects.create(
-                    titulo=unidad.nombre, codigo=codigo_aula[:30],
+            codigo_aula = f"UC{unidad.pk}-N{nucleo.pk}"
+            aula = Course.objects.create(
+                    titulo=unidad.nombre, codigo=codigo_aula,
                     descripcion=unidad.descripcion, programa=unidad.programa,
                     unidad_curricular=unidad, nucleo=nucleo, docente=docente,
                     periodo=unidad.semestre or unidad.trayecto, publicado=False,
