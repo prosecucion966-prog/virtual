@@ -312,6 +312,8 @@ def admin_dashboard(request):
             ("Aulas publicadas", Course.objects.filter(publicado=True).count()),
             ("Núcleos", Nucleo.objects.count()),
             ("Programas", Programa.objects.count()),
+            ("Unidades curriculares", UnidadCurricular.objects.count()),
+            ("Docentes activos", Profile.objects.filter(rol="teacher", estado="activo").count()),
             ("Matrículas activas", Enrollment.objects.filter(activo=True).count()),
         ],
     }
