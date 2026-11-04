@@ -13,7 +13,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
-from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement,AuditLog
+from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement,AuditLog,UnidadCurricular
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 class RegisterForm(forms.Form):
@@ -447,3 +447,152 @@ def admin_announcements(request):
         return redirect("admin_announcements")
     items = Announcement.objects.select_related("autor", "nucleo").order_by("-creado")
     return render(request, "lms/admin_announcements.html", {"announcements": items})
+
+
+# --- Alta administrativa de docentes y unidades curriculares ---
+class AdminDocenteForm(forms.Form):
+    nombres = forms.CharField(max_length=150, label="Nombres", widget=forms.TextInput(attrs={"class": "form-control"}))
+    apellidos = forms.CharField(max_length=150, label="Apellidos", widget=forms.TextInput(attrs={"class": "form-control"}))
+    correo = forms.EmailField(label="Correo institucional", widget=forms.EmailInput(attrs={"class": "form-control"}))
+    cedula = forms.CharField(max_length=12, label="Cédula", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "V-12345678"}))
+    telefono = forms.CharField(max_length=20, label="Teléfono", widget=forms.TextInput(attrs={"class": "form-control"}))
+    nucleo = forms.ModelChoiceField(queryset=Nucleo.objects.filter(activo=True), label="Núcleo", widget=forms.Select(attrs={"class": "form-select"}))
+    password = forms.CharField(label="Contraseña temporal", widget=forms.PasswordInput(attrs={"class": "form-control"}))
+    confirmar_password = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput(attrs={"class": "form-control"}))
+
+    def clean_correo(self):
+        correo = self.cleaned_data["correo"].strip().lower()
+        if User.objects.filter(Q(username__iexact=correo) | Q(email__iexact=correo)).exists():
+            raise forms.ValidationError("Ya existe una cuenta con ese correo.")
+        return correo
+
+    def clean_cedula(self):
+        cedula = self.cleaned_data["cedula"].strip().upper().replace(" ", "")
+        if not re.fullmatch(r"[VE]-?\\d{5,10}", cedula):
+            raise forms.ValidationError("Use V/E seguido de 5 a 10 dígitos.")
+        cedula = cedula[0] + "-" + cedula[1:].lstrip("-")
+        if Profile.objects.filter(cedula=cedula).exists():
+            raise forms.ValidationError("Esta cédula ya está registrada.")
+        return cedula
+
+    def clean(self):
+        data = super().clean()
+        if data.get("password") != data.get("confirmar_password"):
+            self.add_error("confirmar_password", "Las contraseñas no coinciden.")
+        if data.get("password"):
+            try:
+                validate_password(data["password"])
+            except forms.ValidationError as exc:
+                self.add_error("password", exc)
+        return data
+
+
+class AdminUnidadCurricularForm(forms.ModelForm):
+    docente = forms.ModelChoiceField(
+        queryset=User.objects.none(), required=False, label="Docente responsable (opcional)",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    nucleo = forms.ModelChoiceField(
+        queryset=Nucleo.objects.filter(activo=True), required=False, label="Núcleo para crear aula (opcional)",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    class Meta:
+        model = UnidadCurricular
+        fields = ("programa", "codigo", "nombre", "version_malla", "trayecto", "semestre",
+                  "unidades_credito", "horas_semanales", "duracion_semanas", "modalidad", "descripcion", "activa")
+        widgets = {
+            "programa": forms.Select(attrs={"class": "form-select"}),
+            "codigo": forms.TextInput(attrs={"class": "form-control"}),
+            "nombre": forms.TextInput(attrs={"class": "form-control"}),
+            "version_malla": forms.Select(attrs={"class": "form-select"}),
+            "trayecto": forms.TextInput(attrs={"class": "form-control"}),
+            "semestre": forms.TextInput(attrs={"class": "form-control"}),
+            "unidades_credito": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
+            "horas_semanales": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
+            "duracion_semanas": forms.NumberInput(attrs={"class": "form-control", "min": 1}),
+            "modalidad": forms.Select(attrs={"class": "form-select"}),
+            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+            "activa": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["programa"].queryset = Programa.objects.filter(activo=True).order_by("categoria", "nombre")
+        self.fields["docente"].queryset = User.objects.filter(profile__rol="teacher", profile__estado="activo", is_active=True).order_by("last_name", "first_name")
+
+
+@login_required
+def admin_docente_create(request):
+    _require_superadmin(request)
+    form = AdminDocenteForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        data = form.cleaned_data
+        user = User(username=data["correo"], email=data["correo"],
+                    first_name=data["nombres"].strip(), last_name=data["apellidos"].strip(),
+                    is_active=True, is_staff=False, is_superuser=False)
+        user.set_password(data["password"])
+        user.save()
+        Profile.objects.create(
+            user=user, cedula=data["cedula"], telefono=data["telefono"],
+            tipo_estudiante="DOCENTE", nucleo=data["nucleo"], rol="teacher",
+            estado="activo", verificado=timezone.now(),
+        )
+        AuditLog.objects.create(actor=request.user, accion="Creación de docente", detalle=data["correo"])
+        messages.success(request, f"Docente creado y activado: {data['correo']}. No se envió correo.")
+        return redirect("admin_users")
+    return render(request, "lms/form.html", {
+        "form": form, "heading": "Crear cuenta docente",
+        "back_url": reverse("admin_dashboard"),
+        "help_text": "La cuenta queda activa y con rol Docente. La contraseña temporal la define el administrador; no se envía correo.",
+    })
+
+
+@login_required
+def admin_unidad_curricular_create(request):
+    _require_superadmin(request)
+    form = AdminUnidadCurricularForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        unidad = form.save()
+        docente = form.cleaned_data["docente"]
+        nucleo = form.cleaned_data["nucleo"]
+        aula = None
+        if docente and nucleo:
+            if docente.profile.nucleo_id != nucleo.pk:
+                form.add_error("nucleo", "El núcleo seleccionado debe coincidir con el núcleo asignado al docente.")
+            else:
+                codigo_aula = f"{unidad.codigo}-{unidad.version_malla}-{nucleo.pk}"
+                if Course.objects.filter(codigo=codigo_aula).exists():
+                    codigo_aula = f"{codigo_aula}-{unidad.pk}"
+                aula = Course.objects.create(
+                    titulo=unidad.nombre, codigo=codigo_aula[:30],
+                    descripcion=unidad.descripcion, programa=unidad.programa,
+                    unidad_curricular=unidad, nucleo=nucleo, docente=docente,
+                    periodo=unidad.semestre or unidad.trayecto, publicado=False,
+                )
+        AuditLog.objects.create(actor=request.user, accion="Creación de unidad curricular",
+                                detalle=f"{unidad.codigo} · {unidad.nombre} · {unidad.programa.nombre}"[:250])
+        if aula:
+            AuditLog.objects.create(actor=request.user, accion="Creación de aula por unidad curricular",
+                                    detalle=f"{aula.codigo} · {docente.email}"[:250])
+            messages.success(request, f"Unidad vinculada a {unidad.programa.nombre}; aula creada y asignada a {docente.email}.")
+        elif docente and not nucleo:
+            messages.success(request, "Unidad curricular creada y vinculada al programa. Selecciona también el núcleo si deseas crear su aula ahora.")
+        else:
+            messages.success(request, f"Unidad curricular creada y vinculada a {unidad.programa.nombre}.")
+        return redirect("admin_unidades_curriculares")
+    return render(request, "lms/form.html", {
+        "form": form, "heading": "Crear unidad curricular y vincular a programa",
+        "back_url": reverse("admin_dashboard"),
+        "help_text": "Selecciona obligatoriamente el programa. Si eliges docente y núcleo, se crea automáticamente el aula virtual correspondiente.",
+    })
+
+
+@login_required
+def admin_unidades_curriculares(request):
+    _require_superadmin(request)
+    query = request.GET.get("q", "").strip()
+    unidades = UnidadCurricular.objects.select_related("programa").prefetch_related("aulas").order_by("programa__nombre", "trayecto", "nombre")
+    if query:
+        unidades = unidades.filter(Q(nombre__icontains=query) | Q(codigo__icontains=query) | Q(programa__nombre__icontains=query))
+    return render(request, "lms/admin_unidades_curriculares.html", {"unidades": unidades, "query": query})
