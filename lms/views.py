@@ -10,10 +10,11 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import render,redirect
 from django.db.models import Q
+from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
 from django_ratelimit.decorators import ratelimit
-from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement,AuditLog,UnidadCurricular
+from .models import Profile,Nucleo,Programa,Dependencia,Course,Enrollment,Announcement,AuditLog,UnidadCurricular,TeachingAssignment
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 class RegisterForm(forms.Form):
@@ -452,6 +453,13 @@ def admin_announcements(request):
 
 
 # --- Alta administrativa de docentes y unidades curriculares ---
+class UnidadCurricularChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        version = obj.get_version_malla_display()
+        nivel = obj.semestre or obj.trayecto or "Trayecto no indicado"
+        return f"{obj.programa.nombre} · {version} · {nivel} · {obj.nombre}"
+
+
 class AdminDocenteForm(forms.Form):
     nombres = forms.CharField(max_length=150, label="Nombres", widget=forms.TextInput(attrs={"class": "form-control"}))
     apellidos = forms.CharField(max_length=150, label="Apellidos", widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -459,6 +467,16 @@ class AdminDocenteForm(forms.Form):
     cedula = forms.CharField(max_length=12, label="Cédula", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "V-12345678"}))
     telefono = forms.CharField(max_length=20, label="Teléfono", widget=forms.TextInput(attrs={"class": "form-control"}))
     nucleo = forms.ModelChoiceField(queryset=Nucleo.objects.filter(activo=True), label="Núcleo", widget=forms.Select(attrs={"class": "form-select"}))
+    unidades = UnidadCurricularChoiceField(
+        queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
+        label="Materias que impartirá",
+        widget=forms.SelectMultiple(attrs={"class": "form-select", "size": "10"}),
+        help_text="Puedes seleccionar varias materias de distintos programas y versiones de malla.",
+    )
+    periodo = forms.CharField(
+        max_length=80, label="Período académico",
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "2026-II"}),
+    )
     password = forms.CharField(label="Contraseña temporal", widget=forms.PasswordInput(attrs={"class": "form-control"}))
     confirmar_password = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput(attrs={"class": "form-control"}))
 
@@ -486,7 +504,42 @@ class AdminDocenteForm(forms.Form):
                 validate_password(data["password"])
             except forms.ValidationError as exc:
                 self.add_error("password", exc)
+        if not data.get("unidades"):
+            self.add_error("unidades", "Selecciona al menos una unidad curricular para asignar al docente.")
         return data
+
+
+class AdminAsignacionesDocenteForm(forms.Form):
+    unidades = UnidadCurricularChoiceField(
+        queryset=UnidadCurricular.objects.filter(activa=True).select_related("programa").order_by("programa__nombre", "semestre", "nombre"),
+        label="Unidades curriculares",
+        widget=forms.SelectMultiple(attrs={"class": "form-select", "size": "12"}),
+        help_text="Puedes seleccionar materias de diferentes programas y versiones de malla.",
+    )
+    periodo = forms.CharField(
+        max_length=80, label="Período académico",
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "2026-II"}),
+    )
+
+
+def _ensure_assignment_aula(docente, unidad, nucleo, periodo):
+    assignment, _ = TeachingAssignment.objects.get_or_create(
+        docente=docente, unidad_curricular=unidad, nucleo=nucleo, periodo=periodo,
+    )
+    if not assignment.activa:
+        assignment.activa = True
+        assignment.save(update_fields=["activa"])
+    if assignment.aula_id:
+        return assignment, False
+    aula = Course.objects.create(
+        titulo=unidad.nombre, codigo=f"ASG-{assignment.pk}",
+        descripcion=unidad.descripcion, programa=unidad.programa,
+        unidad_curricular=unidad, nucleo=nucleo, docente=docente,
+        periodo=periodo, publicado=False,
+    )
+    assignment.aula = aula
+    assignment.save(update_fields=["aula"])
+    return assignment, True
 
 
 class AdminUnidadCurricularForm(forms.ModelForm):
@@ -535,14 +588,17 @@ class AdminUnidadCurricularForm(forms.ModelForm):
 
 
 @login_required
+@transaction.atomic
 def admin_docente_create(request):
     _require_superadmin(request)
     form = AdminDocenteForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         data = form.cleaned_data
-        user = User(username=data["correo"], email=data["correo"],
-                    first_name=data["nombres"].strip(), last_name=data["apellidos"].strip(),
-                    is_active=True, is_staff=False, is_superuser=False)
+        user = User(
+            username=data["correo"], email=data["correo"],
+            first_name=data["nombres"].strip(), last_name=data["apellidos"].strip(),
+            is_active=True, is_staff=False, is_superuser=False,
+        )
         user.set_password(data["password"])
         user.save()
         Profile.objects.create(
@@ -550,17 +606,59 @@ def admin_docente_create(request):
             tipo_estudiante="DOCENTE", nucleo=data["nucleo"], rol="teacher",
             estado="activo", verificado=timezone.now(),
         )
-        AuditLog.objects.create(actor=request.user, accion="Creación de docente", detalle=data["correo"])
-        messages.success(request, f"Docente creado y activado: {data['correo']}. No se envió correo.")
+        aulas_creadas = 0
+        for unidad in data["unidades"]:
+            _, created = _ensure_assignment_aula(user, unidad, data["nucleo"], data["periodo"])
+            aulas_creadas += int(created)
+        AuditLog.objects.create(
+            actor=request.user, accion="Creación de docente y asignación académica",
+            detalle=f"{data['correo']} · {len(data['unidades'])} materias · {aulas_creadas} aulas"[:250],
+        )
+        messages.success(
+            request,
+            f"Docente creado y activado. Se asignaron {len(data['unidades'])} materias y se crearon {aulas_creadas} aulas. No se envió correo.",
+        )
         return redirect("admin_users")
     return render(request, "lms/form.html", {
-        "form": form, "heading": "Crear cuenta docente",
+        "form": form, "heading": "Crear docente y asignar materias",
         "back_url": reverse("admin_dashboard"),
-        "help_text": "La cuenta queda activa y con rol Docente. La contraseña temporal la define el administrador; no se envía correo.",
+        "help_text": "Completa los datos del docente, selecciona su núcleo, marca una o varias materias de cualquier programa o malla y define el período. Se creará un aula por cada materia. La operación se guarda completa o no se guarda; no se envía correo.",
     })
 
 
 @login_required
+@transaction.atomic
+def admin_docente_asignar(request, user_id):
+    _require_superadmin(request)
+    docente = get_object_or_404(
+        User.objects.select_related("profile__nucleo"),
+        pk=user_id, profile__rol="teacher",
+    )
+    form = AdminAsignacionesDocenteForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        created = duplicates = 0
+        for unidad in form.cleaned_data["unidades"]:
+            _, aula_created = _ensure_assignment_aula(
+                docente, unidad, docente.profile.nucleo, form.cleaned_data["periodo"],
+            )
+            created += int(aula_created)
+            duplicates += int(not aula_created)
+        AuditLog.objects.create(
+            actor=request.user, accion="Asignación de materias a docente",
+            detalle=f"{docente.email} · {len(form.cleaned_data['unidades'])} materias · {created} aulas nuevas"[:250],
+        )
+        messages.success(request, f"Asignación procesada: {created} aulas nuevas; {duplicates} asignaciones existentes se conservaron.")
+        return redirect("admin_users")
+    return render(request, "lms/form.html", {
+        "form": form,
+        "heading": f"Asignar materias a {docente.get_full_name() or docente.email}",
+        "back_url": reverse("admin_users"),
+        "help_text": f"Núcleo del docente: {docente.profile.nucleo.nombre}. Selecciona una o varias unidades curriculares y período. Cada asignación genera un aula independiente; el contenido de aulas existentes se conserva.",
+    })
+
+
+@login_required
+@transaction.atomic
 def admin_unidad_curricular_create(request):
     _require_superadmin(request)
     form = AdminUnidadCurricularForm(request.POST or None)
@@ -570,13 +668,13 @@ def admin_unidad_curricular_create(request):
         nucleo = form.cleaned_data["nucleo"]
         aula = None
         if docente and nucleo:
-            codigo_aula = f"UC{unidad.pk}-N{nucleo.pk}"
-            aula = Course.objects.create(
-                    titulo=unidad.nombre, codigo=codigo_aula,
-                    descripcion=unidad.descripcion, programa=unidad.programa,
-                    unidad_curricular=unidad, nucleo=nucleo, docente=docente,
-                    periodo=unidad.semestre or unidad.trayecto, publicado=False,
-                )
+            _, aula_created = _ensure_assignment_aula(
+                docente, unidad, nucleo, unidad.semestre or unidad.trayecto or "Por definir",
+            )
+            aula = Course.objects.filter(
+                docente=docente, unidad_curricular=unidad, nucleo=nucleo,
+                periodo=unidad.semestre or unidad.trayecto or "Por definir",
+            ).first()
         AuditLog.objects.create(actor=request.user, accion="Creación de unidad curricular",
                                 detalle=f"{unidad.codigo} · {unidad.nombre} · {unidad.programa.nombre}"[:250])
         if aula:
